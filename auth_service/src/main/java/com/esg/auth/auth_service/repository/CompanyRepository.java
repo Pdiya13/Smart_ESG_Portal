@@ -10,7 +10,7 @@ import java.util.OptionalInt;
 import java.util.UUID;
 
 public interface CompanyRepository extends JpaRepository<Company, UUID> {
-    Optional<Company> findByCompanyName(String companyName);
+    Optional<Company> findByEmail(String email);
 
     boolean existsByCompanyName(String companyName);
     boolean existsByEmail(@Email String email);

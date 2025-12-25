@@ -14,10 +14,10 @@ public class CustomCompanyDetailsService implements UserDetailsService {
     private final CompanyRepository companyRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return companyRepository.findByCompanyName(username)
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return companyRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("Company not found with name: " + username)
+                        new UsernameNotFoundException("Company not found with name: " + email)
                 );
     }
 }

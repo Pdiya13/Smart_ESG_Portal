@@ -27,7 +27,7 @@ public class AuthUtil {
     public String generateToken(Company company)
     {
         return Jwts.builder()
-                .subject(company.getCompanyName())
+                .subject(company.getEmail())
                 .claim("companyId" , company.getId().toString())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
