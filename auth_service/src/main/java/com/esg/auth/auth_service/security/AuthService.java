@@ -41,5 +41,29 @@ public class AuthService {
                 .company(companyDto)
                 .build();
     }
+    public SignUpResponseDto signup(SignUpRequestDto signupRequestDto) {
+        if (companyRepository.existsByCompanyName(signupRequestDto.getCompanyName())) {
+            throw new RuntimeException("Company already exists");
+        }
+
+        if (companyRepository.existsByEmail(signupRequestDto.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        Company company = modelMapper.map(signupRequestDto , Company.class);
+
+        company.setPassword(passwordEncoder.encode(signupRequestDto.getPassword()));
+
+        Company savedCompany = companyRepository.save(company);
+
+        CompanyDto companyDto = modelMapper.map(savedCompany , CompanyDto.class);
+
+        return SignUpResponseDto.builder()
+                .message("Company saved successfully")
+                .company(companyDto)
+                .build();
+    }
+
+
 
 }
