@@ -1,8 +1,25 @@
+### Spring Boot ###
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
+
+# Allow target folders inside src (your rules are correct)
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+### macOS (IMPORTANT – missing earlier) ###
+.DS_Store
+
+### Logs ###
+*.log
+logs/
+
+### Environment / Secrets ###
+.env
+application-local.yml
+application-local.properties
+application-*.yml
+application-*.properties
 
 ### STS ###
 .apt_generated
@@ -26,6 +43,8 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
+
+# Allow build folders inside src
 !**/src/main/**/build/
 !**/src/test/**/build/
 
