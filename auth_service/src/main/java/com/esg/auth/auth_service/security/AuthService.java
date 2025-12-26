@@ -3,6 +3,8 @@ package com.esg.auth.auth_service.security;
 import com.esg.auth.auth_service.dto.*;
 import com.esg.auth.auth_service.entity.Company;
 import com.esg.auth.auth_service.repository.CompanyRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.modelmapper.ModelMapper;
@@ -67,11 +69,30 @@ public class AuthService {
     }
 
 
+
+    public CompanyDto update(UUID id, UpdateCompanyRequestDto dto) {
+
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+
+        if (dto.getCompanyName() != null) {
+            company.setCompanyName(dto.getCompanyName());
+        }
+
+        if (dto.getEmail() != null) {
+            company.setEmail(dto.getEmail());
+        }
+
+        Company updatedCompany = companyRepository.save(company);
+
+        return modelMapper.map(updatedCompany, CompanyDto.class);
+    }
+
     public String deleteCompany(UUID id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Company Not Found"));
 
-        companyRepository.delete(company);
+
 
         return "Company account deleted successfully";
     }
