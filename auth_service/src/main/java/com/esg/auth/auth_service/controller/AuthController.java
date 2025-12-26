@@ -33,12 +33,13 @@ public class AuthController {
 
     @PutMapping("/update")
     public ResponseEntity<CompanyDto> upadteCompany(@RequestHeader("Authorization") String authHeader,
-                                                    @Valid @RequestBody UpdateCompanyRequestDto updateCompanyRequestDto)
-    {
+                                                    @Valid @RequestBody UpdateCompanyRequestDto updateCompanyRequestDto) {
         String token = authHeader.replace("Bearer ", "");
         UUID id = authUtil.extractCompanyId(token);
 
         return ResponseEntity.ok(authService.update(id, updateCompanyRequestDto));
+
+    }
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteCompany(@RequestHeader("Authorization") String authHeader)

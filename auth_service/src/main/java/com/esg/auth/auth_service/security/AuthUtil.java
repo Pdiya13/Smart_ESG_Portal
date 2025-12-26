@@ -26,16 +26,7 @@ public class AuthUtil {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public UUID extractCompanyId(String token) {
 
-        Claims claims = Jwts.parser()
-                .verifyWith(getSecretkey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-
-        return UUID.fromString(claims.get("companyId", String.class));
-    }
 
     public String generateToken(Company company)
     {
