@@ -1,6 +1,7 @@
 package com.esg.auth.auth_service.security;
 
 import com.esg.auth.auth_service.entity.Company;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class AuthUtil {
@@ -22,6 +24,17 @@ public class AuthUtil {
     private SecretKey getSecretkey()
     {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public UUID extractCompanyId(String token) {
+
+        Claims claims = Jwts.parser()
+                .verifyWith(getSecretkey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return UUID.fromString(claims.get("companyId", String.class));
     }
 
     public String generateToken(Company company)

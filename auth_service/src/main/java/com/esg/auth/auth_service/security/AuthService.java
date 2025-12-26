@@ -3,6 +3,8 @@ package com.esg.auth.auth_service.security;
 import com.esg.auth.auth_service.dto.*;
 import com.esg.auth.auth_service.entity.Company;
 import com.esg.auth.auth_service.repository.CompanyRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.modelmapper.ModelMapper;
@@ -11,6 +13,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +69,22 @@ public class AuthService {
     }
 
 
+    public CompanyDto update(UUID id, UpdateCompanyRequestDto dto) {
+
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+
+        if (dto.getCompanyName() != null) {
+            company.setCompanyName(dto.getCompanyName());
+        }
+
+        if (dto.getEmail() != null) {
+            company.setEmail(dto.getEmail());
+        }
+
+        Company updatedCompany = companyRepository.save(company);
+
+        return modelMapper.map(updatedCompany, CompanyDto.class);
+    }
 
 }
