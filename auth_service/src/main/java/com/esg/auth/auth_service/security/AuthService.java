@@ -69,6 +69,7 @@ public class AuthService {
     }
 
 
+
     public CompanyDto update(UUID id, UpdateCompanyRequestDto dto) {
 
         Company company = companyRepository.findById(id)
@@ -87,4 +88,12 @@ public class AuthService {
         return modelMapper.map(updatedCompany, CompanyDto.class);
     }
 
+    public String deleteCompany(UUID id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Company Not Found"));
+
+
+
+        return "Company account deleted successfully";
+    }
 }

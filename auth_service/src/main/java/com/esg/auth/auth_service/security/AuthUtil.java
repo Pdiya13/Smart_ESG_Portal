@@ -47,4 +47,15 @@ public class AuthUtil {
                 .signWith(getSecretkey())
                 .compact();
     }
+
+    public UUID extractCompanyId(String token) {
+        String companyId = Jwts.parser()
+                .verifyWith(getSecretkey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("companyId", String.class);
+
+        return UUID.fromString(companyId);
+    }
 }
