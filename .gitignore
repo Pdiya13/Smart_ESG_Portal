@@ -1,0 +1,17 @@
+# OS junk
+.DS_Store
+
+# IDE files
+.idea/
+*.iml
+
+# Build folders
+target/
+build/
+
+# Logs
+*.log
+
+# Env files
+.env
+
