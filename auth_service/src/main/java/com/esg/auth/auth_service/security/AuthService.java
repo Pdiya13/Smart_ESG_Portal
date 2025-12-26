@@ -12,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -65,5 +67,12 @@ public class AuthService {
     }
 
 
+    public String deleteCompany(UUID id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Company Not Found"));
 
+        companyRepository.delete(company);
+
+        return "Company account deleted successfully";
+    }
 }

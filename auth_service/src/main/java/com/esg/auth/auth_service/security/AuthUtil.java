@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class AuthUtil {
@@ -33,5 +34,16 @@ public class AuthUtil {
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getSecretkey())
                 .compact();
+    }
+
+    public UUID extractCompanyId(String token) {
+        String companyId = Jwts.parser()
+                .verifyWith(getSecretkey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("companyId", String.class);
+
+        return UUID.fromString(companyId);
     }
 }
