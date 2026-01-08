@@ -92,7 +92,7 @@ public class AuthService {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Company Not Found"));
 
-
+        companyRepository.delete(company);
 
         return "Company account deleted successfully";
     }
