@@ -20,6 +20,7 @@ import java.util.UUID;
 @Setter
 public class Environment {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "environment_id", nullable = false, updatable = false)
     private UUID environmentId;
 

@@ -18,6 +18,7 @@ import java.util.UUID;
 public class EnvironmentMetric {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "metric_id", nullable = false, updatable = false)
     private UUID metricId;
 
