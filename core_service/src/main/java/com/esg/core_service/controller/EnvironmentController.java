@@ -21,7 +21,7 @@ public class EnvironmentController {
             @RequestHeader("X-Company-Id") UUID companyId,
             @Valid @RequestBody EnvironmentRequestDto dto
     ) {
-        environmentService.submitEnvironmentData(companyId, dto);
+        environmentService.submit(companyId, dto);
         return ResponseEntity.ok("Environment data submitted");
     }
 }
