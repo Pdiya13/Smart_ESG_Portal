@@ -11,22 +11,22 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class SocialFormulaUtil {
 
-    // Women Workforce % = (women / total) * 100
+    // Women Workforce %
     public static float womenWorkforce(int women, int total) {
         return (women * 100f) / total;
     }
 
-    // Women in Leadership % = (women managers / total managers) * 100
+    // Women in Leadership %
     public static float womenLeadership(int womenManagers, int totalManagers) {
         return (womenManagers * 100f) / totalManagers;
     }
 
-    // Attrition Rate % = (left / total employees) * 100
+    // Attrition Rate %
     public static float attrition(int left, int total) {
         return (left * 100f) / total;
     }
 
-    // Hiring Rate % = (joined / total employees) * 100
+    // Hiring Rate %
     public static float hiring(int joined, int total) {
         return (joined * 100f) / total;
     }
@@ -80,7 +80,7 @@ public class SocialFormulaUtil {
         float mental = mentalHealthCoverage(
                 s.getMentalHealthProgramCovered(), s.getTotalEmployees());
 
-        float ltifr = ltifr(
+        float injuryRate = ltifr(
                 s.getWorkplaceInjuries(), s.getTotalWorkHours());
 
         float remote = remotePercent(
@@ -95,11 +95,13 @@ public class SocialFormulaUtil {
         m.setWomenLeadershipPercent(womenLeadership);
         m.setAttritionRate(attrition);
         m.setHiringRate(hiring);
-        m.setTrainingPerEmployee(training);
-        m.setInsuranceCoveragePercent(insurance);
+        m.setTrainingHoursPerEmployee(training);
+        m.setHealthInsuranceCoveragePercent(insurance);
         m.setMentalHealthCoveragePercent(mental);
-        m.setLtifr(ltifr);
+        m.setInjuryRate(injuryRate);
         m.setRemoteWorkPercent(remote);
+
+        m.setEmployeeSatisfactionScore(s.getEmployeeSatisfactionScore());
 
         m.setCalculatedAt(LocalDateTime.now());
         return m;

@@ -27,29 +27,25 @@ public class EnvironmentService {
     private final EnvironmentBenchmarkRepository benchmarkRepository;
     private final ModelMapper modelMapper;
 
-    public void submitEnvironmentData(UUID companyId, @Valid EnvironmentRequestDto dto) {
+    public float submit(UUID companyId, EnvironmentRequestDto dto) {
 
         Environment env = modelMapper.map(dto, Environment.class);
         env.setCompanyId(companyId);
         env.setCreatedAt(LocalDateTime.now());
+        Environment saved = environmentRepository.save(env);
 
-        Environment savedEnv = environmentRepository.save(env);
-
-        EnvironmentMetric metric = EnvironmentFormulaUtil.calculateAll(savedEnv);
-
+        EnvironmentMetric metric = EnvironmentFormulaUtil.calculateAll(saved);
         metricRepository.save(metric);
 
-        List<EnvironmentBenchmark> activeBenchmarks = List.of(
-                benchmarkRepository.findLatest(companyId, "EUI"),
-                benchmarkRepository.findLatest(companyId, "RENEWABLE_PERCENT"),
-                benchmarkRepository.findLatest(companyId, "PUE"),
-                benchmarkRepository.findLatest(companyId, "WATER_PER_EMP"),
-                benchmarkRepository.findLatest(companyId, "EWASTE_RECYCLE"),
-                benchmarkRepository.findLatest(companyId, "CARBON_INTENSITY")
+        List<EnvironmentBenchmark> active = List.of(
+                benchmarkRepository.findLatest(companyId,"EUI"),
+                benchmarkRepository.findLatest(companyId,"RENEWABLE_PERCENT"),
+                benchmarkRepository.findLatest(companyId,"PUE"),
+                benchmarkRepository.findLatest(companyId,"WATER_PER_EMP"),
+                benchmarkRepository.findLatest(companyId,"EWASTE_RECYCLE"),
+                benchmarkRepository.findLatest(companyId,"CARBON_INTENSITY")
         );
 
-        float envScore = EnvironmentScoreEngine.calculateScore(metric, activeBenchmarks);
-
-        System.out.println("Environment Score = " + envScore);
+        return EnvironmentScoreEngine.calculateScore(metric, active);
     }
 }

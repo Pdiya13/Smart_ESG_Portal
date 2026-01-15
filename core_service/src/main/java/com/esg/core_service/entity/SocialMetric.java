@@ -10,8 +10,8 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class SocialMetric {
 
     @Id
@@ -26,10 +26,11 @@ public class SocialMetric {
     private Float womenLeadershipPercent;
     private Float attritionRate;
     private Float hiringRate;
-    private Float trainingPerEmployee;
-    private Float insuranceCoveragePercent;
+    private Float trainingHoursPerEmployee;
+    private Float employeeSatisfactionScore;
+    private Float healthInsuranceCoveragePercent;
     private Float mentalHealthCoveragePercent;
-    private Float ltifr;
+    private Float injuryRate;
     private Float remoteWorkPercent;
 
     private LocalDateTime calculatedAt;
