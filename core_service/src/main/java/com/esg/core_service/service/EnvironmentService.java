@@ -2,6 +2,7 @@ package com.esg.core_service.service;
 
 import com.esg.core_service.dto.EnvironmentRequestDto;
 import com.esg.core_service.entity.Environment;
+import com.esg.core_service.entity.EnvironmentBenchmark;
 import com.esg.core_service.entity.EnvironmentMetric;
 import com.esg.core_service.repository.EnvironmentBenchmarkRepository;
 import com.esg.core_service.repository.EnvironmentMetricRepository;
@@ -14,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,9 +39,16 @@ public class EnvironmentService {
 
         metricRepository.save(metric);
 
-        var benchmarks = benchmarkRepository.findByCompanyId(companyId);
+        List<EnvironmentBenchmark> activeBenchmarks = List.of(
+                benchmarkRepository.findLatest(companyId, "EUI"),
+                benchmarkRepository.findLatest(companyId, "RENEWABLE_PERCENT"),
+                benchmarkRepository.findLatest(companyId, "PUE"),
+                benchmarkRepository.findLatest(companyId, "WATER_PER_EMP"),
+                benchmarkRepository.findLatest(companyId, "EWASTE_RECYCLE"),
+                benchmarkRepository.findLatest(companyId, "CARBON_INTENSITY")
+        );
 
-        float envScore = EnvironmentScoreEngine.calculateScore(metric, benchmarks);
+        float envScore = EnvironmentScoreEngine.calculateScore(metric, activeBenchmarks);
 
         System.out.println("Environment Score = " + envScore);
     }
