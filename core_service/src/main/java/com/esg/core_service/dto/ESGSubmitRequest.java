@@ -17,8 +17,8 @@ public class ESGSubmitRequest {
     @Valid
     private SocialRequestDto social;
 
-//    @NotNull
-//    @Valid
-//    private GovernanceRequestDto governance;
+    @NotNull
+    @Valid
+    private GovernanceRequestDto governance;
 
 }
