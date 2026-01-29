@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/esg")
+@RequestMapping("/submit-all")
 @RequiredArgsConstructor
 public class ESGController {
 
@@ -23,7 +23,7 @@ public class ESGController {
     private final GovernanceService governanceService;
     private final ESGScoreService esgScoreService;
 
-    @PostMapping("/submit-all")
+    @PostMapping
     public ResponseEntity<ESGScore> submitAll(
             @RequestHeader("X-Company-Id") UUID companyId,
             @Valid @RequestBody ESGSubmitRequest request) {

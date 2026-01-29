@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/social")
+@RequestMapping("/social/submit")
 @RequiredArgsConstructor
 public class SocialController {
 
     private final SocialService service;
 
-    @PostMapping("/submit")
+    @PostMapping
     public ResponseEntity<String> submit(
             @RequestHeader("X-Company-Id") UUID companyId,
             @Valid @RequestBody SocialRequestDto dto) {

@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/governance")
+@RequestMapping("/governance/submit")
 @RequiredArgsConstructor
 public class GovernanceController {
 
     private final GovernanceService governanceService;
 
-    @PostMapping("/submit")
+    @PostMapping
     public ResponseEntity<String> submitGovernance(
             @RequestHeader("X-Company-Id") UUID companyId,
             @Valid @RequestBody GovernanceRequestDto dto
