@@ -33,4 +33,8 @@ public class EsgKpiResult {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private KpiStatus  status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EsgPillar pillar;
 }
