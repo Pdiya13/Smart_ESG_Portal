@@ -82,6 +82,26 @@ public class EsgReportService {
         );
     }
 
+    public ApiResponse<EsgScoreSummaryResponseDTO> getEsgScoreSummary(
+            UUID companyId,
+            Integer reportingYear
+    ) {
+        EsgReport report = repository
+                .findByCompanyIdAndReportingYear(companyId, reportingYear)
+                .orElseThrow(() ->
+                        new RuntimeException("ESG report not found")
+                );
+
+        EsgScoreSummaryResponseDTO dto =
+                modelMapper.map(report, EsgScoreSummaryResponseDTO.class);
+
+        return new ApiResponse<>(
+                true,
+                "ESG score summary fetched successfully",
+                dto
+        );
+    }
+
     private int calculateScore(List<EsgKpiResult> results)
     {
         int total = 0;

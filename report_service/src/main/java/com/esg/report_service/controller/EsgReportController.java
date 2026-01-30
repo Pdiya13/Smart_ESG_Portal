@@ -1,8 +1,6 @@
 package com.esg.report_service.controller;
 
-import com.esg.report_service.dto.ApiResponse;
-import com.esg.report_service.dto.EsgReportRequestDTO;
-import com.esg.report_service.dto.EsgReportResponseDTO;
+import com.esg.report_service.dto.*;
 import com.esg.report_service.service.EsgReportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +23,13 @@ public class EsgReportController {
         return ResponseEntity.ok(
                 esgReportService.generateReport(companyId, request)
         );
+    }
+
+    @PostMapping("/score-summary")
+    public ResponseEntity<ApiResponse<EsgScoreSummaryResponseDTO>> getScoreSummary(
+            @RequestHeader("X-Company-Id") UUID companyId,
+            @Valid @RequestBody EsgScoreSummaryRequestDTO request
+    ) {
+        return ResponseEntity.ok(esgReportService.getEsgScoreSummary(companyId, request.getReportingYear()));
     }
 }
