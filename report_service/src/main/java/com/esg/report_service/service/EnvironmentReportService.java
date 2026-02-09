@@ -1,9 +1,8 @@
 package com.esg.report_service.service;
 
 import com.esg.report_service.dto.EnvironmentMetricInputDTO;
-import com.esg.report_service.dto.EnvironmentReportRequestDTO;
-import com.esg.report_service.dto.EnvironmentReportResponseDTO;
 import com.esg.report_service.entity.EsgKpiResult;
+import com.esg.report_service.entity.EsgPillar;
 import com.esg.report_service.entity.EsgReport;
 import com.esg.report_service.entity.KpiStatus;
 import com.esg.report_service.repository.EsgKpiResultRepository;
@@ -15,91 +14,62 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class EnvironmentReportService {
-
-    private final EsgReportRepository reportRepo;
-    private final EsgKpiResultRepository kpiRepo;
-    private final ModelMapper modelMapper;
-
-    @Transactional
-    public EnvironmentReportResponseDTO generateEnvironmentReport(UUID companyId, EnvironmentReportRequestDTO request)
+public class EnvironmentReportService
+{
+    public void evaluate(EnvironmentMetricInputDTO m, EsgReport report, List<EsgKpiResult> results)
     {
+        add("EUI", m.getEui(),
+                EnvironmentBenchmarkConstants.EUI_MAX,
+                m.getEui() <= EnvironmentBenchmarkConstants.EUI_MAX,
+                report, results);
 
-        EnvironmentMetricInputDTO m = request.getMetrics();
+        add("RENEWABLE_ENERGY", m.getRenewableEnergyPercentage(),
+                EnvironmentBenchmarkConstants.RENEWABLE_ENERGY_MIN,
+                m.getRenewableEnergyPercentage() >= EnvironmentBenchmarkConstants.RENEWABLE_ENERGY_MIN,
+                report, results);
 
-        int score = 0;
-        List<EsgKpiResult> kpiResults = new ArrayList<>();
+        add("PUE", m.getPue(),
+                EnvironmentBenchmarkConstants.PUE_MAX,
+                m.getPue() <= EnvironmentBenchmarkConstants.PUE_MAX,
+                report, results);
 
-        score += checkLess("EUI", m.getEnergyUseIntensity(),
-                EnvironmentBenchmarkConstants.EUI_MAX, kpiResults);
+        add("WATER_PER_EMPLOYEE", m.getWaterPerEmployee(),
+                EnvironmentBenchmarkConstants.WATER_PER_EMPLOYEE_MAX,
+                m.getWaterPerEmployee() <= EnvironmentBenchmarkConstants.WATER_PER_EMPLOYEE_MAX,
+                report, results);
 
-        score += checkGreater("Renewable Energy %",
-                m.getRenewableEnergyPercent(),
-                EnvironmentBenchmarkConstants.RENEWABLE_MIN, kpiResults);
+        add("EWASTE_RECYCLING", m.getEWasteRecyclingPercentage(),
+                EnvironmentBenchmarkConstants.EWASTE_RECYCLING_MIN,
+                m.getEWasteRecyclingPercentage() >= EnvironmentBenchmarkConstants.EWASTE_RECYCLING_MIN,
+                report, results);
 
-        score += checkLess("PUE", m.getDataCenterPue(),
-                EnvironmentBenchmarkConstants.PUE_MAX, kpiResults);
-
-        score += checkLess("Water per Employee",
-                m.getWaterPerEmployee(),
-                EnvironmentBenchmarkConstants.WATER_MAX, kpiResults);
-
-        score += checkGreater("E-waste Recycling %",
-                m.getEwasteRecyclingPercent(),
-                EnvironmentBenchmarkConstants.EWASTE_MIN, kpiResults);
-
-        score += checkLess("Carbon Intensity",
-                m.getCarbonIntensity(),
-                EnvironmentBenchmarkConstants.CARBON_MAX, kpiResults);
-
-        int environmentScore = score / 6;
-
-        EsgReport report = new EsgReport();
-        report.setCompanyId(companyId);
-        report.setReportingYear(request.getReportingYear());
-        report.setEnvironmentScore(environmentScore);
-        report.setTotalEsgScore(environmentScore);
-
-        EsgReport savedReport = reportRepo.save(report);
-
-        for (EsgKpiResult kpi : kpiResults) {
-            kpi.setReport(savedReport);
-        }
-        kpiRepo.saveAll(kpiResults);
-
-        savedReport.setKpiResults(kpiResults);
-
-        return modelMapper.map(savedReport, EnvironmentReportResponseDTO.class);
+        add("CARBON_INTENSITY", m.getCarbonIntensity(),
+                EnvironmentBenchmarkConstants.CARBON_INTENSITY_MAX,
+                m.getCarbonIntensity() <= EnvironmentBenchmarkConstants.CARBON_INTENSITY_MAX,
+                report, results);
     }
 
-    private int checkLess(String kpi, Float actual, Float benchmark, List<EsgKpiResult> list)
-    {
-        boolean pass = actual <= benchmark;
-        list.add(createResult(kpi, actual, benchmark, pass));
-        return pass ? 100 : 0;
-    }
-
-    private int checkGreater(String kpi, Float actual, Float benchmark, List<EsgKpiResult> list)
-    {
-        boolean pass = actual >= benchmark;
-        list.add(createResult(kpi, actual, benchmark, pass));
-        return pass ? 100 : 0;
-    }
-
-    private EsgKpiResult createResult(String kpi, Float actual, Float benchmark, boolean pass)
-    {
-        EsgKpiResult result = new EsgKpiResult();
-        result.setKpiName(kpi);
-        result.setActualValue(actual);
-        result.setBenchmarkValue(benchmark);
-        result.setStatus(pass ? KpiStatus.PASS : KpiStatus.FAIL);
-        return result;
+    private void add(
+            String kpi,
+            Float actual,
+            Float benchmark,
+            boolean pass,
+            EsgReport report,
+            List<EsgKpiResult> results
+    ) {
+        EsgKpiResult r = new EsgKpiResult();
+        r.setReport(report);
+        r.setKpiName(kpi);
+        r.setActualValue(actual);
+        r.setBenchmarkValue(benchmark);
+        r.setStatus(pass ? KpiStatus.PASS : KpiStatus.FAIL);
+        r.setPillar(EsgPillar.ENVIRONMENT);
+        results.add(r);
     }
 }
