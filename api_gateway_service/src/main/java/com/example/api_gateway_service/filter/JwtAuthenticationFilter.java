@@ -1,7 +1,7 @@
 package com.example.api_gateway_service.filter;
 
-import com.esg.gateway.client.AuthServiceClient;
-import com.esg.gateway.dto.TokenIntrospectResponse;
+import com.example.api_gateway_service.client.AuthServiceClient;
+import com.example.api_gateway_service.dto.TokenIntrospectResponse;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpHeaders;

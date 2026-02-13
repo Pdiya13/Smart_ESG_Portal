@@ -1,6 +1,6 @@
 package com.example.api_gateway_service.client;
 
-import com.esg.gateway.dto.TokenIntrospectResponse;
+import com.example.api_gateway_service.dto.TokenIntrospectResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
