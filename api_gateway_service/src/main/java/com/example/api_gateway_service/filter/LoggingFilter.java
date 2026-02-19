@@ -18,6 +18,7 @@ public class LoggingFilter implements GlobalFilter {
                 " " +
                 exchange.getRequest().getURI());
 
+
         return chain.filter(exchange);
     }
 }

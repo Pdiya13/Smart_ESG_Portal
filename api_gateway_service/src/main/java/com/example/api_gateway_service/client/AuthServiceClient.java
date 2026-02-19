@@ -10,14 +10,16 @@ public class AuthServiceClient {
 
     private final WebClient webClient;
 
-    public AuthServiceClient(WebClient webClient) {
-        this.webClient = webClient;
+    public AuthServiceClient(WebClient.Builder builder) {
+        this.webClient = builder
+                .baseUrl("http://localhost:8081")
+                .build();
     }
 
     public Mono<TokenIntrospectResponse> validateToken(String token) {
 
         return webClient.post()
-                .uri("http://localhost:8081/auth/introspect")
+                .uri("http://localhost:8081/auth/token/introspect")
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .bodyToMono(TokenIntrospectResponse.class);
