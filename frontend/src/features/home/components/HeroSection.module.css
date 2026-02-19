@@ -1,0 +1,236 @@
+.hero {
+    position: relative;
+    overflow: hidden;
+    padding-top: 80px;
+    padding-bottom: 128px;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+}
+
+.gridBackground {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(to right, rgba(128, 128, 128, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(128, 128, 128, 0.07) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 10;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 896px;
+    /* max-w-4xl roughly */
+    margin: 0 auto;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    border: 1px solid var(--color-input);
+    background-color: var(--color-secondary);
+    padding: 4px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 32px;
+}
+
+.badgeDot {
+    display: block;
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    margin-right: 8px;
+}
+
+.title {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 32px;
+    line-height: 1.1;
+}
+
+.subtitle {
+    color: var(--color-muted-foreground);
+}
+
+.description {
+    font-size: 20px;
+    color: var(--color-muted-foreground);
+    margin-bottom: 48px;
+    max-width: 672px;
+    /* max-w-2xl */
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.scene {
+    margin-top: 80px;
+    position: relative;
+    width: 100%;
+    max-width: 1024px;
+    height: 400px;
+    display: none;
+}
+
+.mainCard {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    /* Initial centering, will be overridden by motion but good fallback */
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    padding: 24px;
+    width: 600px;
+    z-index: 20;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.cardTitle {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.scoreBadge {
+    font-size: 14px;
+    color: #16a34a;
+    /* green-600 */
+    background-color: #dcfce7;
+    /* green-100 */
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.chartContainer {
+    height: 160px;
+    background-color: rgba(244, 244, 245, 0.5);
+    /* secondary/50 */
+    border-radius: 4px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 16px;
+    gap: 8px;
+}
+
+.bar {
+    width: 100%;
+    background-color: var(--color-primary);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.floatingCardLeft,
+.floatingCardRight {
+    position: absolute;
+    top: 80px;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    width: 256px;
+    /* w-64 */
+    z-index: 10;
+}
+
+.floatingCardLeft {
+    left: 0;
+}
+
+.floatingCardRight {
+    right: 0;
+    top: 40px;
+}
+
+.miniCardHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.iconBox {
+    padding: 8px;
+    background-color: var(--color-secondary);
+    border-radius: 8px;
+}
+
+.miniCardTitle {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.miniCardSub {
+    font-size: 12px;
+    color: var(--color-muted-foreground);
+}
+
+.progressBar {
+    width: 100%;
+    background-color: var(--color-secondary);
+    height: 8px;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.progressFill {
+    background-color: var(--color-primary);
+    height: 100%;
+}
+
+.compliantBadge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #16a34a;
+    font-weight: 500;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #16a34a;
+}
+
+@media (min-width: 768px) {
+    .title {
+        font-size: 72px;
+    }
+
+    .actions {
+        flex-direction: row;
+    }
+
+    .scene {
+        display: block;
+    }
+}

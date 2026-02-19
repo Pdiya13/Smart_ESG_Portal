@@ -1,0 +1,133 @@
+.footer {
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+    padding: 64px 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.topSection {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    margin-bottom: 64px;
+}
+
+.brandSection {
+    max-width: 320px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    text-decoration: none;
+    color: var(--color-background);
+}
+
+.logoImage {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+    /* Invert color if logo is black on transparent background, to make it visible on dark footer */
+    filter: brightness(0) invert(1);
+}
+
+.logoText {
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: -0.025em;
+}
+
+.tagline {
+    color: var(--color-muted-foreground);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.linksSection {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+}
+
+.column h3 {
+    font-weight: 700;
+    font-size: 18px;
+    padding-left: 12px;
+    border-left: 2px solid var(--color-background);
+    margin-bottom: 16px;
+}
+
+.column ul {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--color-muted-foreground);
+}
+
+.link {
+    transition: color 0.2s;
+    cursor: pointer;
+}
+
+.link:hover {
+    color: var(--color-background);
+}
+
+.divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin-bottom: 32px;
+    width: 100%;
+}
+
+.bottomBar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-size: 14px;
+    color: var(--color-muted-foreground);
+    align-items: center;
+}
+
+.socials {
+    display: flex;
+    gap: 16px;
+}
+
+.socialLink {
+    transition: color 0.2s;
+    cursor: pointer;
+}
+
+.socialLink:hover {
+    color: var(--color-background);
+}
+
+@media (min-width: 768px) {
+    .topSection {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .linksSection {
+        width: auto;
+        grid-template-columns: repeat(3, 1fr);
+        flex: 1;
+        justify-content: flex-end;
+    }
+
+    .bottomBar {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}

@@ -1,0 +1,91 @@
+.section {
+    padding: 96px 0;
+    background-color: var(--color-background);
+    border-top: 1px solid var(--color-border);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 64px;
+}
+
+.title {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 16px;
+}
+
+.description {
+    color: var(--color-muted-foreground);
+    max-width: 672px;
+    margin: 0 auto;
+    font-size: 16px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+}
+
+.card {
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background);
+    /* strictly bg-card usually same as background or slightly different, assume white */
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.card:hover {
+    background-color: rgba(244, 244, 245, 0.5);
+    /* secondary/50 */
+}
+
+.iconBox {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    background-color: var(--color-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    transition: transform 0.2s;
+}
+
+.card:hover .iconBox {
+    transform: scale(1.1);
+}
+
+.cardTitle {
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.cardDesc {
+    color: var(--color-muted-foreground);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
