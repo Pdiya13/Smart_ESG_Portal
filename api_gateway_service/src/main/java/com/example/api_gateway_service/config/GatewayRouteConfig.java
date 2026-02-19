@@ -19,10 +19,12 @@ public class GatewayRouteConfig {
 
                 .route("core-service", r -> r
                         .path("/core/**")
+                        .filters(f -> f.stripPrefix(1))
                         .uri("http://localhost:8082"))
 
                 .route("report-service", r -> r
                         .path("/report/**")
+                        .filters(f -> f.stripPrefix(1))
                         .uri("http://localhost:8083"))
 
                 .build();

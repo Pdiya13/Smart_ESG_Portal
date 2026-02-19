@@ -9,7 +9,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "esg_report")
+@Table(
+        name = "esg_report",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"company_id", "reporting_year"})
+        }
+)
 @Getter
 @Setter
 public class EsgReport {

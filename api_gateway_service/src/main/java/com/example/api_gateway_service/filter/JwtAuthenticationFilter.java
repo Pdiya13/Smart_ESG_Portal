@@ -24,6 +24,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
                              GatewayFilterChain chain) {
 
         String path = exchange.getRequest().getURI().getPath();
+        System.out.println("Incoming path: " + path);
 
         if (path.startsWith("/auth")) {
             return chain.filter(exchange);
@@ -41,6 +42,10 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         String token = authHeader.substring(7);
 
         return authServiceClient.validateToken(token)
+                .doOnNext(response -> {
+                    System.out.println("Introspect valid: " + response.isValid());
+                    System.out.println("CompanyId: " + response.getCompanyId());
+                })
                 .flatMap(response -> {
 
                     if (!response.isValid()) {
@@ -53,7 +58,6 @@ public class JwtAuthenticationFilter implements GlobalFilter {
                                     .request(exchange.getRequest()
                                             .mutate()
                                             .header("X-Company-Id", response.getCompanyId())
-                                            .header("X-Company-Role", response.getRole())
                                             .build())
                                     .build()
                     );

@@ -1,162 +1,115 @@
 package com.esg.report_service.service;
 
-import com.esg.report_service.dto.*;
-import com.esg.report_service.entity.EsgKpiResult;
-import com.esg.report_service.entity.EsgPillar;
+import com.esg.report_service.client.CoreServiceClient;
+import com.esg.report_service.dto.ApiResponse;
+import com.esg.report_service.dto.EsgReportRequestDTO;
+import com.esg.report_service.dto.EsgReportResponseDTO;
+import com.esg.report_service.dto.EsgScoreSummaryResponseDTO;
 import com.esg.report_service.entity.EsgReport;
-import com.esg.report_service.entity.KpiStatus;
 import com.esg.report_service.repository.EsgReportRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import com.esg.report_service.entity.EsgPillar;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class EsgReportService {
 
-    private final EsgReportRepository repository;
-    private final EnvironmentReportService environmentService;
-    private final SocialReportService socialService;
-    private final GovernanceReportService governanceService;
-    private final ModelMapper modelMapper;
+    private final CoreServiceClient coreServiceClient;
+    private final EsgReportRepository esgReportRepository;
 
-    public ApiResponse<EsgReportResponseDTO> generateReport(UUID companyId, EsgReportRequestDTO request)
-    {
-        EsgReport report = repository
-                .findByCompanyIdAndReportingYear(companyId, request.getReportingYear())
-                .orElseGet(() -> {
-                    EsgReport r = new EsgReport();
-                    r.setCompanyId(companyId);
-                    r.setReportingYear(request.getReportingYear());
-                    r.setKpiResults(new ArrayList<>());
-                    return r;
-                });
+    public ApiResponse<EsgReportResponseDTO> generateReport(
+            UUID companyId,
+            EsgReportRequestDTO request
+    ) {
 
-        report.getKpiResults()
-                .removeIf(k -> k.getPillar() == request.getPillar());
+        Integer year = request.getReportingYear();
+        EsgPillar pillar = request.getPillar();
 
-        List<EsgKpiResult> newResults = new ArrayList<>();
+        Object coreData;
 
-        switch (request.getPillar())
-        {
+        switch (pillar) {
             case ENVIRONMENT ->
-                    environmentService.evaluate(
-                            (EnvironmentMetricInputDTO) request.getMetrics(),
-                            report,
-                            newResults
-                    );
+                    coreData = coreServiceClient.getEnvironmentData(companyId, year).block();
 
             case SOCIAL ->
-                    socialService.evaluate(
-                            (SocialMetricInputDTO) request.getMetrics(),
-                            report,
-                            newResults
-                    );
+                    coreData = coreServiceClient.getSocialData(companyId, year).block();
 
             case GOVERNANCE ->
-                    governanceService.evaluate(
-                            (GovernanceMetricInputDTO) request.getMetrics(),
-                            report,
-                            newResults
-                    );
+                    coreData = coreServiceClient.getGovernanceData(companyId, year).block();
+
+            default -> throw new RuntimeException("Invalid pillar");
         }
 
-        report.getKpiResults().addAll(newResults);
+        if (coreData == null) {
+            throw new RuntimeException("No data found in Core for this year");
+        }
 
-        int pillarScore = calculateScore(newResults);
-        setScore(report, request.getPillar(), pillarScore);
+        int score = 80; // dummy score
 
-        report.setTotalEsgScore(calculateTotalEsgScore(report));
+        EsgReport report = esgReportRepository
+                .findByCompanyIdAndReportingYear(companyId, year)
+                .orElse(new EsgReport());
 
-        repository.save(report);
+        report.setCompanyId(companyId);
+        report.setReportingYear(year);
 
-        return new ApiResponse<>(
-                true,
-                "ESG report generated successfully",
-                mapToResponse(report)
-        );
+        switch (pillar) {
+            case ENVIRONMENT -> report.setEnvironmentScore(score);
+            case SOCIAL -> report.setSocialScore(score);
+            case GOVERNANCE -> report.setGovernanceScore(score);
+        }
+
+        Integer env = report.getEnvironmentScore() == null ? 0 : report.getEnvironmentScore();
+        Integer soc = report.getSocialScore() == null ? 0 : report.getSocialScore();
+        Integer gov = report.getGovernanceScore() == null ? 0 : report.getGovernanceScore();
+
+        report.setTotalEsgScore(env + soc + gov);
+
+        esgReportRepository.save(report);
+
+        // response
+        EsgReportResponseDTO response = new EsgReportResponseDTO();
+        response.setCompanyId(companyId);
+        response.setReportingYear(year);
+        response.setEnvironmentScore(report.getEnvironmentScore());
+        response.setSocialScore(report.getSocialScore());
+        response.setGovernanceScore(report.getGovernanceScore());
+        response.setTotalEsgScore(report.getTotalEsgScore());
+
+        ApiResponse<EsgReportResponseDTO> api = new ApiResponse<>();
+        api.setSuccess(true);
+        api.setMessage("Report generated successfully");
+        api.setData(response);
+
+        return api;
     }
 
     public ApiResponse<EsgScoreSummaryResponseDTO> getEsgScoreSummary(
             UUID companyId,
             Integer reportingYear
     ) {
-        EsgReport report = repository
+
+        EsgReport report = esgReportRepository
                 .findByCompanyIdAndReportingYear(companyId, reportingYear)
                 .orElseThrow(() ->
-                        new RuntimeException("ESG report not found")
-                );
+                        new RuntimeException("ESG report not found"));
 
-        EsgScoreSummaryResponseDTO dto =
-                modelMapper.map(report, EsgScoreSummaryResponseDTO.class);
+        EsgScoreSummaryResponseDTO response = new EsgScoreSummaryResponseDTO();
+        response.setCompanyId(companyId);
+        response.setReportingYear(reportingYear);
+        response.setEnvironmentScore(report.getEnvironmentScore());
+        response.setSocialScore(report.getSocialScore());
+        response.setGovernanceScore(report.getGovernanceScore());
+        response.setTotalEsgScore(report.getTotalEsgScore());
 
-        return new ApiResponse<>(
-                true,
-                "ESG score summary fetched successfully",
-                dto
-        );
-    }
+        ApiResponse<EsgScoreSummaryResponseDTO> api = new ApiResponse<>();
+        api.setSuccess(true);
+        api.setMessage("Score summary fetched successfully");
+        api.setData(response);
 
-    private int calculateScore(List<EsgKpiResult> results)
-    {
-        int total = 0;
-        for (EsgKpiResult r : results)
-        {
-            total += (r.getStatus() == KpiStatus.PASS) ? 100 : 0;
-        }
-        return results.isEmpty() ? 0 : total / results.size();
-    }
-
-    private int calculateTotalEsgScore(EsgReport report)
-    {
-        int total = 0;
-        int count = 0;
-
-        if (report.getEnvironmentScore() != null)
-        {
-            total += report.getEnvironmentScore();
-            count++;
-        }
-        if (report.getSocialScore() != null)
-        {
-            total += report.getSocialScore();
-            count++;
-        }
-        if (report.getGovernanceScore() != null)
-        {
-            total += report.getGovernanceScore();
-            count++;
-        }
-        return count == 0 ? 0 : total / count;
-    }
-
-    private void setScore(EsgReport report, EsgPillar pillar, int score)
-    {
-        switch (pillar)
-        {
-            case ENVIRONMENT -> report.setEnvironmentScore(score);
-            case SOCIAL -> report.setSocialScore(score);
-            case GOVERNANCE -> report.setGovernanceScore(score);
-        }
-    }
-
-    private EsgReportResponseDTO mapToResponse(EsgReport report)
-    {
-        EsgReportResponseDTO dto =
-                modelMapper.map(report, EsgReportResponseDTO.class);
-
-        List<KpiResultResponseDTO> kpis = new ArrayList<>();
-        for (EsgKpiResult r : report.getKpiResults()) {
-            kpis.add(modelMapper.map(r, KpiResultResponseDTO.class));
-        }
-
-        dto.setKpiResults(kpis);
-        return dto;
+        return api;
     }
 }
-

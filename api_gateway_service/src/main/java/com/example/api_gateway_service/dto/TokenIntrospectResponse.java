@@ -4,7 +4,6 @@ public class TokenIntrospectResponse {
 
     private boolean valid;
     private String companyId;
-    private String role;
 
     public boolean isValid() {
         return valid;
@@ -12,10 +11,6 @@ public class TokenIntrospectResponse {
 
     public String getCompanyId() {
         return companyId;
-    }
-
-    public String getRole() {
-        return role;
     }
 
     public void setValid(boolean valid) {
@@ -26,7 +21,4 @@ public class TokenIntrospectResponse {
         this.companyId = companyId;
     }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
 }

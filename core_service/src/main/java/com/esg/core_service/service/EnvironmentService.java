@@ -48,4 +48,17 @@ public class EnvironmentService {
 
         return EnvironmentScoreEngine.calculateScore(metric, active);
     }
+
+    public EnvironmentRequestDto getReportData(UUID companyId, Integer year) {
+
+        System.out.println("CompanyId received: " + companyId);
+        System.out.println("Year received: " + year);
+
+        Environment entity = environmentRepository
+                .findTopByCompanyIdAndReportingYearOrderByCreatedAtDesc(companyId, year)
+                .orElseThrow(() ->
+                        new RuntimeException("Environment data not found"));
+
+        return modelMapper.map(entity, EnvironmentRequestDto.class);
+    }
 }

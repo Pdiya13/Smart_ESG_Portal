@@ -54,4 +54,17 @@ public class GovernanceService {
 
         return GovernanceScoreEngine.calculateScore(metric, benchmarks);
     }
+
+    public GovernanceRequestDto getReportData(UUID companyId, Integer year) {
+
+        System.out.println("CompanyId received: " + companyId);
+        System.out.println("Year received: " + year);
+
+        Governance entity = repo
+                .findTopByCompanyIdAndReportingYearOrderByCreatedAtDesc(companyId, year)
+                .orElseThrow(() ->
+                        new RuntimeException("Governance data not found"));
+
+        return mapper.map(entity, GovernanceRequestDto.class);
+    }
 }

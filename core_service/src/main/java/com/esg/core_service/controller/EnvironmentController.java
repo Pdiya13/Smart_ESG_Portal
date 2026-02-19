@@ -24,4 +24,15 @@ public class EnvironmentController {
         environmentService.submit(companyId, dto);
         return ResponseEntity.ok("Environment data submitted");
     }
+
+    @GetMapping("/report-data")
+    public ResponseEntity<EnvironmentRequestDto> getEnvironmentReportData(
+            @RequestHeader("X-Company-Id") UUID companyId,
+            @RequestParam Integer reportingYear
+    ) {
+        return ResponseEntity.ok(
+                environmentService.getReportData(companyId, reportingYear)
+        );
+    }
+
 }

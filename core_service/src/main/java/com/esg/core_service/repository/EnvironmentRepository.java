@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface EnvironmentRepository extends JpaRepository<Environment, UUID> {
-    Optional<Environment> findByCompanyIdAndReportingYear(
+    Optional<Environment> findTopByCompanyIdAndReportingYearOrderByCreatedAtDesc(
             UUID companyId, Integer reportingYear);
+
 }
