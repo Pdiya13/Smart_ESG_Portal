@@ -24,4 +24,14 @@ public class GovernanceController {
         governanceService.submit(companyId, dto);
         return ResponseEntity.ok("Governance data submitted successfully");
     }
+
+    @GetMapping("/report-data")
+    public ResponseEntity<GovernanceRequestDto> getGovernanceReportData(
+            @RequestHeader("X-Company-Id") UUID companyId,
+            @RequestParam Integer reportingYear
+    ) {
+        return ResponseEntity.ok(
+                governanceService.getReportData(companyId, reportingYear)
+        );
+    }
 }

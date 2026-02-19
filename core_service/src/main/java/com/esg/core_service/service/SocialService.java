@@ -49,4 +49,17 @@ public class SocialService {
 
         return SocialScoreEngine.calculateScore(metric, active);
     }
+
+    public SocialRequestDto getReportData(UUID companyId, Integer year) {
+
+        System.out.println("CompanyId received: " + companyId);
+        System.out.println("Year received: " + year);
+
+        Social entity = socialRepository
+                .findTopByCompanyIdAndReportingYearOrderByCreatedAtDesc(companyId, year)
+                .orElseThrow(() ->
+                        new RuntimeException("Social data not found"));
+
+        return mapper.map(entity, SocialRequestDto.class);
+    }
 }

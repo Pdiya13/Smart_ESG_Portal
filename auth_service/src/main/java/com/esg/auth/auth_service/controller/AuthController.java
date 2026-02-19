@@ -50,4 +50,30 @@ public class AuthController {
         return ResponseEntity.ok(authService.deleteCompany(companyId));
 
     }
+
+    @PostMapping("/token/introspect")
+    public ResponseEntity<TokenIntrospectResponse> introspect(
+            @RequestHeader("Authorization") String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.ok(
+                    new TokenIntrospectResponse(false, null)
+            );
+        }
+
+        String token = authHeader.substring(7);
+
+        try {
+            UUID companyId = authUtil.extractCompanyId(token);
+
+            return ResponseEntity.ok(
+                    new TokenIntrospectResponse(true, companyId.toString())
+            );
+
+        } catch (Exception e) {
+            return ResponseEntity.ok(
+                    new TokenIntrospectResponse(false, null)
+            );
+        }
+    }
 }

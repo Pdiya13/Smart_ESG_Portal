@@ -24,4 +24,14 @@ public class SocialController {
         service.submit(companyId, dto);
         return ResponseEntity.ok("Social data submitted");
     }
+
+    @GetMapping("/report-data")
+    public ResponseEntity<SocialRequestDto> getSocialReportData(
+            @RequestHeader("X-Company-Id") UUID companyId,
+            @RequestParam Integer reportingYear
+    ) {
+        return ResponseEntity.ok(
+                service.getReportData(companyId, reportingYear)
+        );
+    }
 }
