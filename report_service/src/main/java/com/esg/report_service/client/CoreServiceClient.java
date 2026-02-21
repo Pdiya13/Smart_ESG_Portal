@@ -1,64 +1,76 @@
 package com.esg.report_service.client;
 
+import com.esg.report_service.dto.EsgScoreDTO;
+import com.esg.report_service.dto.MetricBreakdownDTO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class CoreServiceClient {
 
+    private final WebClient.Builder webClientBuilder;
 
-    private final WebClient webClient;
-
-
-    public CoreServiceClient(WebClient.Builder builder) {
-        this.webClient = builder.baseUrl("http://localhost:8082").build();
+    private WebClient client() {
+        return webClientBuilder
+                .baseUrl("http://localhost:8082")
+                .build();
     }
 
-    public Mono<Object> getEnvironmentData(UUID companyId, Integer year) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/environment/submit/report-data")
-                        .queryParam("reportingYear", year)
-                        .build())
+    // ==============================
+    // Get ESG Score By Year
+    // ==============================
+    public Mono<EsgScoreDTO> getEsgScore(UUID companyId, Integer year) {
+
+        return client()
+                .get()
+                .uri("/core/esg-score/{year}", year)
                 .header("X-Company-Id", companyId.toString())
                 .retrieve()
-                .bodyToMono(Object.class)
-                .doOnNext(data ->
-                        System.out.println("Environment response from Core: " + data))
-                .doOnError(error ->
-                        System.out.println("Environment ERROR: " + error.getMessage()));
+                .onStatus(
+                        status -> status == HttpStatus.NOT_FOUND,
+                        response -> Mono.empty()
+                )
+                .bodyToMono(EsgScoreDTO.class)
+                .onErrorResume(e -> Mono.empty());
     }
 
-    public Mono<Object> getSocialData(UUID companyId, Integer year) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/social/submit/report-data")
-                        .queryParam("reportingYear", year)
-                        .build())
+    // ==============================
+    // Get All ESG Scores
+    // ==============================
+    public Mono<List<EsgScoreDTO>> getAllEsgScores(UUID companyId) {
+
+        return client()
+                .get()
+                .uri("/core/esg-score/all")
                 .header("X-Company-Id", companyId.toString())
                 .retrieve()
-                .bodyToMono(Object.class)
-                .doOnNext(data ->
-                        System.out.println("Social response from Core: " + data))
-                .doOnError(error ->
-                        System.out.println("Social ERROR: " + error.getMessage()));
+                .bodyToFlux(EsgScoreDTO.class)
+                .collectList()
+                .onErrorResume(e -> Mono.empty());
     }
 
-    public Mono<Object> getGovernanceData(UUID companyId, Integer year) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/governance/submit/report-data")
-                        .queryParam("reportingYear", year)
-                        .build())
+    // ==============================
+    // Get KPI Metrics
+    // ==============================
+    public Mono<MetricBreakdownDTO> getMetrics(UUID companyId, Integer year) {
+
+        return client()
+                .get()
+                .uri("/core/metrics/{year}", year)
                 .header("X-Company-Id", companyId.toString())
                 .retrieve()
-                .bodyToMono(Object.class)
-                .doOnNext(data ->
-                        System.out.println("Governance response from Core: " + data))
-                .doOnError(error ->
-                        System.out.println("Governance ERROR: " + error.getMessage()));
+                .onStatus(
+                        status -> status == HttpStatus.NOT_FOUND,
+                        response -> Mono.empty()
+                )
+                .bodyToMono(MetricBreakdownDTO.class)
+                .onErrorResume(e -> Mono.empty());
     }
 }

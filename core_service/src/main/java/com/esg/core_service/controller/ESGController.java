@@ -28,7 +28,15 @@ public class ESGController {
             @RequestHeader("X-Company-Id") UUID companyId,
             @Valid @RequestBody ESGSubmitRequest request) {
 
-        int reportingYear = request.getEnvironment().getReportingYear();
+        int envYear = request.getEnvironment().getReportingYear();
+        int socYear = request.getSocial().getReportingYear();
+        int govYear = request.getGovernance().getReportingYear();
+
+        if (envYear != socYear || envYear != govYear) {
+            throw new IllegalArgumentException(
+                    "Reporting year must be same for Environment, Social, and Governance"
+            );
+        }
 
         float env = environmentService.submit(companyId, request.getEnvironment());
         float soc = socialService.submit(companyId, request.getSocial());
@@ -36,7 +44,7 @@ public class ESGController {
 
         ESGScore score = esgScoreService.save(
                 companyId,
-                reportingYear,
+                envYear,
                 env,
                 soc,
                 gov

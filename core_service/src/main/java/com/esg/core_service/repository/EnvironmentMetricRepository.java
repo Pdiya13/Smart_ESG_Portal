@@ -9,4 +9,7 @@ import java.util.UUID;
 public interface EnvironmentMetricRepository extends JpaRepository<EnvironmentMetric, UUID> {
     Optional<EnvironmentMetric> findByCompanyIdAndReportingYear(
             UUID companyId, Integer reportingYear);
+
+    Optional<EnvironmentMetric> findTopByCompanyIdAndReportingYearOrderByCalculatedAtDesc(
+            UUID companyId, Integer year);
 }
