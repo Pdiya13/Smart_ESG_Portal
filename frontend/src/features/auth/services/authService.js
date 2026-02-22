@@ -5,7 +5,7 @@ const API_URL = 'http://localhost:8080/auth';
 
 const login = async (data) => {
     const response = await axios.post(`${API_URL}/login`, data);
-    if (response.data.token) { // Adjust based on actual response structure
+    if (response.data.jwt || response.data.token) { // Adjust based on actual response structure
         localStorage.setItem('user', JSON.stringify(response.data));
     }
     return response.data;
@@ -13,7 +13,7 @@ const login = async (data) => {
 
 const signup = async (data) => {
     const response = await axios.post(`${API_URL}/signup`, data);
-    if (response.data.token) {
+    if (response.data.jwt || response.data.token) {
         localStorage.setItem('user', JSON.stringify(response.data));
     }
     return response.data;

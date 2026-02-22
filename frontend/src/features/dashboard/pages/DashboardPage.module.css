@@ -1,0 +1,398 @@
+.dashboard {
+    position: relative;
+    min-height: 100vh;
+    padding-top: 100px;
+    padding-bottom: 80px;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    overflow: hidden;
+}
+
+.gridBackground {
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(to right, rgba(128, 128, 128, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(128, 128, 128, 0.07) 1px, transparent 1px);
+    background-size: 24px 24px;
+    z-index: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 10;
+}
+
+.header {
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.title {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: var(--color-muted-foreground);
+    font-size: 16px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .mainChart {
+        grid-column: span 2;
+    }
+}
+
+/* 3D Glassmorphism Cards */
+.card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    padding: 24px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+.card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 40px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.cardTitle {
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cardIcon {
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    color: var(--color-primary);
+}
+
+.scoreValue {
+    font-size: 48px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--color-primary), #3b82f6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+}
+
+.scoreLabel {
+    font-size: 14px;
+    color: var(--color-muted-foreground);
+    margin-top: 8px;
+}
+
+/* Chart Area */
+.chartContainer {
+    height: 300px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* Trends & Recommendations */
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.listItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.listItemIcon {
+    margin-top: 2px;
+    color: var(--color-primary);
+}
+
+.listItemText {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.positive {
+    color: #10b981;
+}
+
+.negative {
+    color: #ef4444;
+}
+
+/* 3D Model placeholder or decorative elements */
+.decorativeSphere {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(var(--color-primary-rgb), 0.4), transparent);
+    filter: blur(40px);
+    z-index: 1;
+}
+
+.sphere1 {
+    width: 300px;
+    height: 300px;
+    top: -100px;
+    right: -50px;
+}
+
+.sphere2 {
+    width: 400px;
+    height: 400px;
+    bottom: -150px;
+    left: -100px;
+    background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.3), transparent);
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--color-primary);
+}
+
+/* =========================================
+   DETAILED METRICS VIEW (3D GLASSMORPHISM)
+   ========================================= */
+
+.metricsSection {
+    margin-top: 32px;
+    width: 100%;
+}
+
+.metricsToggleContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.metricsToggleBtn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 4px 0px #020617,
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.metricsToggleBtn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.2),
+        0 6px 0px #020617,
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, #334155, #1e293b);
+}
+
+.metricsToggleBtn:active {
+    transform: translateY(4px);
+    box-shadow:
+        0 1px 2px 0 rgba(0, 0, 0, 0.1),
+        0 0px 0px #020617,
+        inset 0 4px 5px rgba(0, 0, 0, 0.3);
+}
+
+.metricsContainer {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 1);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05), inset 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+    .metricsContainer {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.02);
+    }
+}
+
+.metricsHeader {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.metricsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 768px) {
+    .metricsGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.pillarCard {
+    border-radius: 16px;
+    padding: 24px;
+    transition: transform 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.pillarCard:hover {
+    transform: translateY(-4px);
+}
+
+.pillarCardEnv {
+    background: rgba(240, 253, 244, 0.5);
+    border-color: rgba(187, 247, 208, 0.5);
+}
+
+.pillarCardSoc {
+    background: rgba(239, 246, 255, 0.5);
+    border-color: rgba(191, 219, 254, 0.5);
+}
+
+.pillarCardGov {
+    background: rgba(250, 245, 255, 0.5);
+    border-color: rgba(233, 213, 255, 0.5);
+}
+
+.pillarCardTitle {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pillarCardEnv .pillarCardTitle {
+    color: #166534;
+}
+
+.pillarCardSoc .pillarCardTitle {
+    color: #1e40af;
+}
+
+.pillarCardGov .pillarCardTitle {
+    color: #6b21a8;
+}
+
+.pillarCardEnv .cardIcon {
+    color: #22c55e;
+}
+
+.pillarCardSoc .cardIcon {
+    color: #3b82f6;
+}
+
+.pillarCardGov .cardIcon {
+    color: #a855f7;
+}
+
+.metricRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    font-size: 14px;
+}
+
+.metricRow:last-child {
+    border-bottom: none;
+}
+
+.metricName {
+    color: #475569;
+    text-transform: capitalize;
+}
+
+.metricValue {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.metricTotalRow {
+    border-bottom-width: 2px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.metricTotalRow .metricName {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.pillarCardEnv .metricTotalRow .metricValue {
+    color: #15803d;
+}
+
+.pillarCardSoc .metricTotalRow .metricValue {
+    color: #1d4ed8;
+}
+
+.pillarCardGov .metricTotalRow .metricValue {
+    color: #7e22ce;
+}
+
+.emptyMetrics {
+    font-style: italic;
+    color: #94a3b8;
+    font-size: 13px;
+    margin-top: 12px;
+}

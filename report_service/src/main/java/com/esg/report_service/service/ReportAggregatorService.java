@@ -54,6 +54,7 @@ public class ReportAggregatorService {
         dto.setMetrics(metrics);
         dto.setTrends(trends);
         dto.setRecommendations(recommendations);
+        dto.setHistory(allScores);
 
         return dto;
     }

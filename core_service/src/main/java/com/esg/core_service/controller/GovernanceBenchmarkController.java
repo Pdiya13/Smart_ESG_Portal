@@ -1,11 +1,13 @@
 package com.esg.core_service.controller;
 
 import com.esg.core_service.dto.GovernanceBenchmarkRequestDto;
+import com.esg.core_service.entity.GovernanceBenchmark;
 import com.esg.core_service.service.GovernanceBenchmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,5 +24,11 @@ public class GovernanceBenchmarkController {
 
         service.save(companyId, dto);
         return ResponseEntity.ok("Governance benchmark saved");
+    }
+
+    @GetMapping
+    public ResponseEntity<List<GovernanceBenchmark>> getBenchmarks(
+            @RequestHeader("X-Company-Id") UUID companyId) {
+        return ResponseEntity.ok(service.getBenchmarks(companyId));
     }
 }

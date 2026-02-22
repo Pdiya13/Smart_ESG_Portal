@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -28,5 +29,9 @@ public class SocialBenchmarkService {
         b.setCreatedAt(LocalDateTime.now());
 
         repository.save(b);
+    }
+
+    public List<SocialBenchmark> getBenchmarks(UUID companyId) {
+        return repository.findByCompanyId(companyId);
     }
 }

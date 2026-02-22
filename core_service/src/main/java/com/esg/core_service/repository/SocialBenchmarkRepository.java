@@ -24,4 +24,6 @@ public interface SocialBenchmarkRepository
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No benchmark for " + kpiName));
     }
+
+    List<SocialBenchmark> findByCompanyId(UUID companyId);
 }

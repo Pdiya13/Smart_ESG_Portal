@@ -7,7 +7,7 @@ public class GovernanceBenchmarkRules {
         switch (kpi) {
             case "BOARD_INDEPENDENCE",
                  "FEMALE_DIRECTORS",
-                 "BOARD_ATTENDANCE",
+                 "ATTENDANCE",
                  "WHISTLEBLOWER_RESOLUTION" -> {
                 if (value < 0 || value > 100)
                     throw new IllegalArgumentException("Percentage must be 0–100");
@@ -33,7 +33,7 @@ public class GovernanceBenchmarkRules {
         return switch (kpi) {
             case "BOARD_INDEPENDENCE",
                  "FEMALE_DIRECTORS",
-                 "BOARD_ATTENDANCE",
+                 "ATTENDANCE",
                  "WHISTLEBLOWER_RESOLUTION",
                  "BOARD_MEETINGS" -> "GREATER_THAN";
 

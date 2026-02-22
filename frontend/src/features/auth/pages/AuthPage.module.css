@@ -20,9 +20,9 @@
         0 10px 10px rgba(0, 0, 0, 0.22);
     position: relative;
     overflow: hidden;
-    width: 900px;
+    width: 1000px;
     max-width: 100%;
-    min-height: 550px;
+    min-height: 650px;
 }
 
 .formContainer {
@@ -240,7 +240,7 @@
 @media (max-width: 768px) {
     .container {
         width: 90%;
-        min-height: 600px;
+        min-height: 700px;
         flex-direction: column;
         display: flex;
         border-radius: 20px;
@@ -279,4 +279,35 @@
     .toggleContainer {
         display: none;
     }
+
+    .backButton {
+        top: 15px;
+        left: 15px;
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+}
+
+.backButton {
+    position: absolute;
+    top: 30px;
+    left: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.backButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }

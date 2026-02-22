@@ -10,4 +10,5 @@ public class DashboardResponseDTO {
     private MetricBreakdownDTO metrics;
     private List<TrendDTO> trends;
     private List<RecommendationDTO> recommendations;
+    private List<EsgScoreDTO> history;
 }

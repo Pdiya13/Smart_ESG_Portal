@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { Home } from 'lucide-react';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import authService from '../services/authService';
@@ -55,6 +56,10 @@ const AuthPage = () => {
 
     return (
         <div className={styles.pageContainer}>
+            <Link to="/" className={styles.backButton}>
+                <Home size={24} />
+                <span>Back to Home</span>
+            </Link>
             <div className={`${styles.container} ${isSignUp ? styles.active : ''}`}>
 
                 {/* Sign Up Container */}
@@ -62,7 +67,6 @@ const AuthPage = () => {
                     <div className={styles.formContent}>
                         <h1 className={styles.title}>Create Account</h1>
                         {/* Social Icons could go here */}
-                        <span className="text-sm text-gray-500 mb-4">or use your email for registration</span>
                         <RegisterForm onSubmit={handleRegister} isLoading={isLoading} />
                     </div>
                 </div>
@@ -72,7 +76,6 @@ const AuthPage = () => {
                     <div className={styles.formContent}>
                         <h1 className={styles.title}>Sign In</h1>
                         {/* Social Icons could go here */}
-                        <span className="text-sm text-gray-500 mb-4">or use your email account</span>
                         <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
                     </div>
                 </div>
