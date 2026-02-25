@@ -46,19 +46,29 @@
 }
 
 .grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
+    display: block;
 }
 
 @media (min-width: 1024px) {
     .grid {
-        grid-template-columns: repeat(3, 1fr);
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        align-items: start;
     }
+}
 
-    .mainChart {
-        grid-column: span 2;
-    }
+.leftColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.rightColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 /* 3D Glassmorphism Cards */
@@ -102,24 +112,94 @@
 }
 
 .scoreValue {
-    font-size: 48px;
+    font-size: 36px;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--color-primary), #3b82f6);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
     line-height: 1;
 }
 
 .scoreLabel {
     font-size: 14px;
     color: var(--color-muted-foreground);
-    margin-top: 8px;
+    margin-top: 4px;
+}
+
+.expandButton {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 0;
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s ease;
+}
+
+.expandButton:hover {
+    color: #3b82f6;
+}
+
+.detailsContainer {
+    overflow: hidden;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.yearSelectorBlock {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+}
+
+.yearSelectorTitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.yearChips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.yearChip {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    color: var(--color-foreground);
+}
+
+.yearChip:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.yearChip.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 /* Chart Area */
 .chartContainer {
-    height: 300px;
+    height: 380px;
     width: 100%;
     margin-top: 20px;
 }
