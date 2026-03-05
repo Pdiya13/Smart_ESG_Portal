@@ -1,0 +1,67 @@
+.tickerContainer {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    /* Darker glass effect */
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    height: 48px;
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+}
+
+.badge {
+    background: var(--color-primary);
+    color: white;
+    height: 100%;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 2;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
+    min-width: max-content;
+}
+
+.marqueeWrapper {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+
+.marqueeContent {
+    display: flex;
+    white-space: nowrap;
+    width: max-content;
+}
+
+.newsGroup {
+    display: flex;
+    align-items: center;
+}
+
+.newsItem {
+    display: flex;
+    align-items: center;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    margin-right: 3rem;
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    margin-right: 0.75rem;
+    box-shadow: 0 0 8px var(--color-primary);
+}

@@ -55,16 +55,148 @@
     margin-right: 8px;
 }
 
-.title {
-    font-size: 48px;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    margin-bottom: 32px;
-    line-height: 1.1;
+.esgTitleContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 40px;
 }
 
-.subtitle {
-    color: var(--color-muted-foreground);
+.titleWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    width: 100%;
+    position: relative;
+}
+
+@media (min-width: 768px) {
+    .titleWrapper {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
+.esgWord {
+    font-size: 56px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    line-height: 1.05;
+    text-transform: uppercase;
+    position: relative;
+    display: inline-block;
+    background: linear-gradient(110deg,
+            var(--color-foreground) 30%,
+            rgba(150, 150, 150, 0.8) 50%,
+            var(--color-foreground) 70%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shineText 5s linear infinite;
+    filter: drop-shadow(0px 8px 16px rgba(0, 0, 0, 0.08));
+}
+
+@keyframes shineText {
+    0% {
+        background-position: 200% center;
+    }
+
+    100% {
+        background-position: -200% center;
+    }
+}
+
+@media (min-width: 768px) {
+    .esgWord {
+        font-size: clamp(64px, 7vw, 110px);
+    }
+}
+
+.letterE {
+    color: #10b981;
+    -webkit-text-stroke: 0;
+    -webkit-text-fill-color: initial;
+    text-shadow: 0px 4px 24px rgba(16, 185, 129, 0.5);
+}
+
+.letterS {
+    color: #3b82f6;
+    -webkit-text-stroke: 0;
+    -webkit-text-fill-color: initial;
+    text-shadow: 0px 4px 24px rgba(59, 130, 246, 0.5);
+}
+
+.letterG {
+    color: #8b5cf6;
+    -webkit-text-stroke: 0;
+    -webkit-text-fill-color: initial;
+    text-shadow: 0px 4px 24px rgba(139, 92, 246, 0.5);
+}
+
+.bgE {
+    background: rgba(16, 185, 129, 0.15);
+}
+
+.bgS {
+    background: rgba(59, 130, 246, 0.15);
+}
+
+.bgG {
+    background: rgba(139, 92, 246, 0.15);
+}
+
+.dynamicTextContainer {
+    height: 48px;
+    margin-top: 32px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    overflow: hidden;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .dynamicTextContainer {
+        justify-content: center;
+    }
+}
+
+.dynamicText {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-foreground);
+    background: linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: gradientShift 5s ease infinite;
+    line-height: 1.2;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@media (min-width: 768px) {
+    .dynamicText {
+        font-size: 32px;
+    }
 }
 
 .description {
@@ -81,156 +213,82 @@
     gap: 16px;
 }
 
-.scene {
-    margin-top: 80px;
-    position: relative;
-    width: 100%;
-    max-width: 1024px;
-    height: 400px;
-    display: none;
-}
-
-.mainCard {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    transform: translateX(-50%);
-    /* Initial centering, will be overridden by motion but good fallback */
-    background-color: var(--color-background);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    padding: 24px;
-    width: 600px;
-    z-index: 20;
-}
-
-.cardHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
-
-.cardTitle {
-    font-weight: 700;
-    font-size: 18px;
-}
-
-.scoreBadge {
-    font-size: 14px;
-    color: #16a34a;
-    /* green-600 */
-    background-color: #dcfce7;
-    /* green-100 */
-    padding: 4px 8px;
-    border-radius: 4px;
-}
-
-.chartContainer {
-    height: 160px;
-    background-color: rgba(244, 244, 245, 0.5);
-    /* secondary/50 */
-    border-radius: 4px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    padding: 16px;
-    gap: 8px;
-}
-
-.bar {
-    width: 100%;
-    background-color: var(--color-primary);
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-}
-
-.floatingCardLeft,
-.floatingCardRight {
-    position: absolute;
-    top: 80px;
-    background-color: var(--color-background);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    padding: 16px;
-    width: 256px;
-    /* w-64 */
-    z-index: 10;
-}
-
-.floatingCardLeft {
-    left: 0;
-}
-
-.floatingCardRight {
-    right: 0;
-    top: 40px;
-}
-
-.miniCardHeader {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-
-.iconBox {
-    padding: 8px;
-    background-color: var(--color-secondary);
-    border-radius: 8px;
-}
-
-.miniCardTitle {
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.miniCardSub {
-    font-size: 12px;
-    color: var(--color-muted-foreground);
-}
-
-.progressBar {
-    width: 100%;
-    background-color: var(--color-secondary);
-    height: 8px;
-    border-radius: 9999px;
+.marqueeContainer {
+    width: 100vw;
+    max-width: 100%;
     overflow: hidden;
+    padding: 60px 0;
+    margin-top: 60px;
+    position: relative;
+    /* Blend edges carefully to transparent */
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
 }
 
-.progressFill {
-    background-color: var(--color-primary);
-    height: 100%;
+.marqueeTrack {
+    display: flex;
+    gap: 32px;
+    min-width: max-content;
+    padding: 0 16px;
 }
 
-.compliantBadge {
+.marqueeTrack:hover {
+    animation-play-state: paused;
+}
+
+.floatingCard {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 24px 32px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: #16a34a;
-    font-weight: 500;
+    gap: 20px;
+    color: white;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+    min-width: 280px;
+    cursor: pointer;
 }
 
-.dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #16a34a;
+.floatingCard:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.iconWrapperCard {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.floatingCard:hover .iconWrapperCard {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.floaterText {
+    display: flex;
+    flex-direction: column;
+}
+
+.floaterTitle {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.floaterSub {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 @media (min-width: 768px) {
-    .title {
-        font-size: 72px;
-    }
-
     .actions {
         flex-direction: row;
-    }
-
-    .scene {
-        display: block;
     }
 }
