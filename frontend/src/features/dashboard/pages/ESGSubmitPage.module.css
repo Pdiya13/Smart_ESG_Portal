@@ -522,3 +522,486 @@
         0 2px 0 #cbd5e1,
         inset 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+
+/* ===============================================
+   MODE SWITCHER — two large card tiles
+   =============================================== */
+
+.modeSwitcher {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+    width: 100%;
+    max-width: 640px;
+}
+
+.modeCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 28px 20px;
+    border-radius: 18px;
+    border: 2px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #64748b;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 4px 0 #e2e8f0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.modeCard::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.25s;
+    border-radius: 16px;
+}
+
+.modeCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08), 0 6px 0 #e2e8f0;
+    border-color: #cbd5e1;
+    color: #1e293b;
+}
+
+.modeCardManual.active {
+    border-color: #10b981;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.03));
+    color: #065f46;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2), 0 4px 0 rgba(16, 185, 129, 0.3);
+}
+
+.modeCardCsv.active {
+    border-color: #6366f1;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(99, 102, 241, 0.03));
+    color: #3730a3;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2), 0 4px 0 rgba(99, 102, 241, 0.3);
+}
+
+.modeCardIcon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all 0.25s;
+}
+
+.modeCardManual .modeCardIcon {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.06));
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.modeCardManual.active .modeCardIcon {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.1));
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.25);
+}
+
+.modeCardCsv .modeCardIcon {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(99, 102, 241, 0.06));
+    color: #6366f1;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.modeCardCsv.active .modeCardIcon {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(99, 102, 241, 0.1));
+    box-shadow: 0 0 16px rgba(99, 102, 241, 0.25);
+}
+
+.modeCardLabel {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.modeCardSub {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #94a3b8;
+    line-height: 1.4;
+}
+
+.modeCardManual.active .modeCardSub,
+.modeCardCsv.active .modeCardSub {
+    color: inherit;
+    opacity: 0.65;
+}
+
+.modeActiveDot {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.modeCardManual.active .modeActiveDot {
+    background: #10b981;
+    box-shadow: 0 0 6px #10b981;
+}
+
+.modeCardCsv.active .modeActiveDot {
+    background: #6366f1;
+    box-shadow: 0 0 6px #6366f1;
+}
+
+/* ===============================================
+   CSV UPLOAD PANEL — step containers
+   =============================================== */
+
+.csvPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.stepCard {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05), inset 0 0 12px rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+}
+
+.stepHeader {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.stepBadge {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.stepBadgeGreen {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35);
+}
+
+.stepBadgeIndigo {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.35);
+}
+
+.stepBadgeAmber {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);
+}
+
+.stepTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 2px;
+}
+
+.stepSub {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+/* Download buttons row */
+.downloadBtns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.dlBtnCsv,
+.dlBtnXlsx {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: 11px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dlBtnCsv {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.04));
+    border: 1.5px solid rgba(16, 185, 129, 0.45);
+    color: #059669;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+}
+
+.dlBtnCsv:hover {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.08));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.2);
+}
+
+.dlBtnXlsx {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(99, 102, 241, 0.04));
+    border: 1.5px solid rgba(99, 102, 241, 0.45);
+    color: #4f46e5;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+}
+
+.dlBtnXlsx:hover {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.08));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.2);
+}
+
+/* Dropzone */
+.dropzone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 14px;
+    padding: 40px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    background: rgba(248, 250, 252, 0.6);
+    user-select: none;
+}
+
+.dropzone:hover,
+.dropzoneHover {
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.04);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.06);
+}
+
+.dropzoneFilled {
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.04);
+    border-style: solid;
+}
+
+.dropzoneIcon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 14px;
+    color: #94a3b8;
+}
+
+.dropzoneFilled .dropzoneIcon {
+    color: #10b981;
+}
+
+.dropzoneText {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #475569;
+    margin: 0 0 6px;
+}
+
+.dropzoneHint {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+/* Parsed file info bar */
+.parsedBar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+}
+
+.parsedSuccess {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #059669;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.previewTriggerBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.85rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(99, 102, 241, 0.06));
+    border: 1.5px solid rgba(99, 102, 241, 0.45);
+    color: #4f46e5;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+}
+
+.previewTriggerBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.2);
+}
+
+/* Alert strips */
+.alertStrip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 16px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-top: 12px;
+}
+
+.alertStripError {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #dc2626;
+}
+
+.validationBox {
+    margin-top: 12px;
+    padding: 14px 18px;
+    border-radius: 11px;
+    background: rgba(239, 68, 68, 0.06);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.validationTitle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin: 0 0 8px;
+}
+
+.validationList {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 0.78rem;
+    color: #ef4444;
+    line-height: 1.9;
+}
+
+/* Preview step card */
+.previewHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.previewCloseBtn {
+    background: rgba(248, 250, 252, 0.9);
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    padding: 6px 10px;
+    cursor: pointer;
+    color: #64748b;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.previewCloseBtn:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+    transform: scale(1.05);
+}
+
+.previewSection {
+    margin-bottom: 18px;
+}
+
+.previewSectionTitle {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.previewSectionEnv {
+    color: #059669;
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+.previewSectionSoc {
+    color: #2563eb;
+    border-color: rgba(37, 99, 235, 0.2);
+}
+
+.previewSectionGov {
+    color: #7c3aed;
+    border-color: rgba(124, 58, 237, 0.2);
+}
+
+.previewGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 6px;
+}
+
+.previewRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    background: rgba(248, 250, 252, 0.8);
+    border: 1px solid #f1f5f9;
+}
+
+.previewRowKey {
+    font-size: 0.76rem;
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+.previewRowVal {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #1e293b;
+    text-align: right;
+}
+
+.previewActions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 22px;
+    flex-wrap: wrap;
+}
+
+/* formContainer — used by manual tab form sections */
+.formContainer {
+    width: 100%;
+}
