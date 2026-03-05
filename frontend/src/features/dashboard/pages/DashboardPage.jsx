@@ -157,32 +157,32 @@ const DashboardPage = () => {
                     <div className="flex flex-col items-end gap-3 z-20">
                         <div className="flex items-center gap-3 z-20">
 
-                    <Link to="/benchmarks">
-                    <Button variant="outline" size="sm" className="flex items-center gap-2 border-primary text-primary hover:bg-primary/5">
-                        <Target size={16} />
-                        <span>Set Benchmarks</span>
-                    </Button>
-                    </Link>
+                            <Link to="/benchmarks">
+                                <Button variant="outline" size="sm" className="flex items-center gap-2 border-primary text-primary hover:bg-primary/5">
+                                    <Target size={16} />
+                                    <span>Set Benchmarks</span>
+                                </Button>
+                            </Link>
 
-                    <Link to="/submit-esg">
-                    <Button variant="outline" size="sm" className="flex items-center gap-2 border-green-500 text-green-600 hover:bg-green-50">
-                        <Leaf size={16} />
-                        <span>Submit Data</span>
-                    </Button>
-                    </Link>
+                            <Link to="/submit-esg">
+                                <Button variant="outline" size="sm" className="flex items-center gap-2 border-green-500 text-green-600 hover:bg-green-50">
+                                    <Leaf size={16} />
+                                    <span>Submit Data</span>
+                                </Button>
+                            </Link>
 
-                    <Button
-                        onClick={downloadPdf}
-                        disabled={!data}
-                        variant="outline"
-                        size="sm"
-                        className="flex items-center gap-2 border-blue-500 text-blue-600 hover:bg-blue-50"
-                    >
-                        <ArrowRight size={16} />
-                        <span>Download Report</span>
-                    </Button>
+                            <Button
+                                onClick={downloadPdf}
+                                disabled={!data}
+                                variant="outline"
+                                size="sm"
+                                className="flex items-center gap-2 border-blue-500 text-blue-600 hover:bg-blue-50"
+                            >
+                                <ArrowRight size={16} />
+                                <span>Download Report</span>
+                            </Button>
 
-                    </div>
+                        </div>
                     </div>
                 </div>
 

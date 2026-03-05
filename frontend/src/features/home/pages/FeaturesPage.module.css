@@ -1,0 +1,170 @@
+.pageWrapper {
+    min-height: 100vh;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    padding-top: 80px;
+    padding-bottom: 120px;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.gridBackground {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+        linear-gradient(to right, rgba(128, 128, 128, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(128, 128, 128, 0.07) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+.heroSection {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 80px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 10;
+}
+
+.heroBadge {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--color-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-foreground);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.heroTitle {
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    color: var(--color-foreground);
+    letter-spacing: -0.02em;
+}
+
+.heroDescription {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--color-muted-foreground);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Bento Grid Layout */
+.featuresGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 10;
+}
+
+@media (min-width: 768px) {
+    .featuresGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .featuresGrid {
+        grid-template-columns: repeat(3, 1fr);
+        /* Adding variable row heights for bento effect */
+        grid-auto-rows: minmax(320px, auto);
+    }
+
+    /* Make some cards span 2 columns to create the bento look */
+    .featureCard:nth-child(1),
+    .featureCard:nth-child(4),
+    .featureCard:nth-child(5),
+    .featureCard:nth-child(8),
+    .featureCard:nth-child(9) {
+        grid-column: span 2;
+    }
+}
+
+.featureCard {
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 24px;
+    padding: 32px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.featureCard:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-foreground);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.iconWrapper {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    background-color: var(--color-secondary);
+    color: var(--color-foreground);
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+}
+
+.featureCard:hover .iconWrapper {
+    transform: scale(1.1) rotate(5deg);
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+    border-color: var(--color-foreground);
+}
+
+.featureTitle {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--color-foreground);
+    letter-spacing: -0.01em;
+}
+
+.featureDescription {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-muted-foreground);
+    flex-grow: 1;
+}
+
+.categoryLabel {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 12px;
+    border-radius: 99px;
+    background-color: var(--color-secondary);
+    color: var(--color-muted-foreground);
+    transition: all 0.3s ease;
+}
+
+.featureCard:hover .categoryLabel {
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+}

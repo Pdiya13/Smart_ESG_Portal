@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import MainLayout from '../shared/layouts/MainLayout';
 import HomePage from '../features/home/pages/HomePage';
+import FeaturesPage from '../features/home/pages/FeaturesPage';
 import AuthPage from '../features/auth/pages/AuthPage';
 import DashboardPage from '../features/dashboard/pages/DashboardPage';
 import ESGSubmitPage from '../features/dashboard/pages/ESGSubmitPage';
@@ -13,6 +14,7 @@ const AppRoutes = () => {
         <Routes>
             <Route path="/" element={<MainLayout />}>
                 <Route index element={<HomePage />} />
+                <Route path="features" element={<FeaturesPage />} />
 
                 {/* Protected Routes */}
                 <Route element={<ProtectedRoute />}>

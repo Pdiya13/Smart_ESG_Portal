@@ -24,9 +24,8 @@ const Navbar = () => {
 
                 <div className={styles.navLinks}>
                     <Link to="/" className={styles.navLink}>Home</Link>
-                    <Link to="/about" className={styles.navLink}>About</Link>
                     <Link to="/features" className={styles.navLink}>Features</Link>
-                    <Link to="/rating" className={styles.navLink}>ESG Rating</Link>
+                    <Link to={user ? "/dashboard" : "/register"} className={styles.navLink}>ESG Rating</Link>
                 </div>
 
                 <div className={styles.actions}>
@@ -35,12 +34,6 @@ const Navbar = () => {
                             <span className="text-sm font-medium text-gray-700 hidden md:block">
                                 {user.companyName || user.email}
                             </span>
-                            <Link to="/dashboard">
-                                <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                                    <LayoutDashboard size={16} />
-                                    <span className="hidden sm:inline">Dashboard</span>
-                                </Button>
-                            </Link>
                             <Button variant="outline" size="sm" onClick={handleLogout} className="flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300">
                                 <LogOut size={16} />
                                 <span className="hidden sm:inline">Logout</span>
