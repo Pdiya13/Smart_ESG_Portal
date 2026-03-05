@@ -64,6 +64,37 @@ const DashboardPage = () => {
         }
     };
 
+    const downloadPdf = async () => {
+        try {
+            if (!data) {
+                alert("No dashboard data available");
+                return;
+            }
+
+            const response = await api.get(
+                `/report/reports/dashboard/${selectedYear}/download`,
+                { responseType: "blob" }
+            );
+
+            const blob = new Blob([response.data], { type: "application/pdf" });
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `ESG_Report_${selectedYear}.pdf`;
+
+            document.body.appendChild(link);
+            link.click();
+
+            link.remove();
+            window.URL.revokeObjectURL(url);
+
+        } catch (error) {
+            console.error("Failed to download ESG report", error);
+            alert("Failed to download ESG report. Please try again.");
+        }
+    };
+
     const renderMetricsContent = (pillarName, metricsData, totalScore, iconClass, valueClass) => {
         return (
             <AnimatePresence>
@@ -125,20 +156,33 @@ const DashboardPage = () => {
                     </div>
                     <div className="flex flex-col items-end gap-3 z-20">
                         <div className="flex items-center gap-3 z-20">
-                            <Link to="/benchmarks">
-                                <Button variant="outline" size="sm" className="flex items-center gap-2 border-primary text-primary hover:bg-primary/5">
-                                    <Target size={16} />
-                                    <span>Set Benchmarks</span>
-                                </Button>
-                            </Link>
-                            <Link to="/submit-esg">
-                                <Button variant="outline" size="sm" className="flex items-center gap-2 border-green-500 text-green-600 hover:bg-green-50 z-20 position-relative">
-                                    <Leaf size={16} />
-                                    <span>Submit Data</span>
-                                </Button>
-                            </Link>
 
-                        </div>
+                    <Link to="/benchmarks">
+                    <Button variant="outline" size="sm" className="flex items-center gap-2 border-primary text-primary hover:bg-primary/5">
+                        <Target size={16} />
+                        <span>Set Benchmarks</span>
+                    </Button>
+                    </Link>
+
+                    <Link to="/submit-esg">
+                    <Button variant="outline" size="sm" className="flex items-center gap-2 border-green-500 text-green-600 hover:bg-green-50">
+                        <Leaf size={16} />
+                        <span>Submit Data</span>
+                    </Button>
+                    </Link>
+
+                    <Button
+                        onClick={downloadPdf}
+                        disabled={!data}
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-2 border-blue-500 text-blue-600 hover:bg-blue-50"
+                    >
+                        <ArrowRight size={16} />
+                        <span>Download Report</span>
+                    </Button>
+
+                    </div>
                     </div>
                 </div>
 
