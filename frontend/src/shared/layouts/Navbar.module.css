@@ -64,3 +64,84 @@
         display: flex;
     }
 }
+
+.userControls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.profileLink {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #374151;
+    /* gray-700 */
+    transition: color 0.2s;
+}
+
+.profileLink:hover {
+    color: #16a34a;
+    /* green-600 */
+}
+
+@media (min-width: 768px) {
+    .profileLink {
+        display: flex;
+    }
+}
+
+.profileAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #dcfce7;
+    /* green-100 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #15803d;
+    /* green-700 */
+    font-weight: 700;
+    border: 1px solid #bbf7d0;
+    /* green-200 */
+}
+
+.profileName {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.logoutBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #fecaca;
+    /* red-200 */
+    color: #dc2626;
+    /* red-600 */
+    background: transparent;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logoutBtn:hover {
+    background-color: #fef2f2;
+    /* red-50 */
+    border-color: #fca5a5;
+    /* red-300 */
+}
+
+.logoutText {
+    display: none;
+}
+
+@media (min-width: 640px) {
+    .logoutText {
+        display: inline;
+    }
+}
