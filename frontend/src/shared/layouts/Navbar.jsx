@@ -30,13 +30,18 @@ const Navbar = () => {
 
                 <div className={styles.actions}>
                     {user ? (
-                        <div className="flex items-center gap-4">
-                            <span className="text-sm font-medium text-gray-700 hidden md:block">
-                                {user.companyName || user.email}
-                            </span>
-                            <Button variant="outline" size="sm" onClick={handleLogout} className="flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300">
+                        <div className={styles.userControls}>
+                            <Link to="/profile" className={styles.profileLink}>
+                                <div className={styles.profileAvatar}>
+                                    {(user.companyName || user.email || 'C').charAt(0).toUpperCase()}
+                                </div>
+                                <span className={styles.profileName}>
+                                    {user.companyName || user.email}
+                                </span>
+                            </Link>
+                            <Button variant="outline" size="sm" onClick={handleLogout} className={styles.logoutBtn}>
                                 <LogOut size={16} />
-                                <span className="hidden sm:inline">Logout</span>
+                                <span className={styles.logoutText}>Logout</span>
                             </Button>
                         </div>
                     ) : (

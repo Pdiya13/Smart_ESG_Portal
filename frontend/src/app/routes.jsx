@@ -7,6 +7,7 @@ import DashboardPage from '../features/dashboard/pages/DashboardPage';
 import ESGSubmitPage from '../features/dashboard/pages/ESGSubmitPage';
 import ESGBenchmarkPage from '../features/dashboard/pages/ESGBenchmarkPage';
 import ESGUploadPage from '../features/dashboard/pages/ESGUploadPage';
+import ProfilePage from '../features/auth/pages/ProfilePage';
 import ProtectedRoute from '../shared/components/routes/ProtectedRoute';
 
 const AppRoutes = () => {
@@ -22,6 +23,7 @@ const AppRoutes = () => {
                     <Route path="submit-esg" element={<ESGSubmitPage />} />
                     <Route path="benchmarks" element={<ESGBenchmarkPage />} />
                     <Route path="upload-esg" element={<ESGUploadPage />} />
+                    <Route path="profile" element={<ProfilePage />} />
                 </Route>
             </Route>
 
