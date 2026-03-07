@@ -1,0 +1,47 @@
+Field Key (do NOT edit),Field Label,Hint / Description,Your Value  ← fill here
+🌿 ENVIRONMENT,,,
+env_reportingYear,Reporting Year,e.g. 2025,2028
+env_totalElectricityKwh,Total Electricity (kWh),Annual consumption in kWh,520000
+env_officeAreaSqm,Office Area (sqm),Total office floor area in m²,2100
+env_dieselUsedLiters,Diesel Used (Liters),Annual diesel consumption,2800
+env_renewableEnergyKwh,Renewable Energy (kWh),Solar/wind energy consumed,180000
+env_dataCenterTotalEnergyKwh,Data Center Total Energy (kWh),Total data center energy,85000
+env_dataCenterItEnergyKwh,Data Center IT Energy (kWh),IT equipment energy only,65000
+env_totalWaterLiters,Total Water (Liters),Annual water consumption,1050000
+env_recycledWaterLiters,Recycled Water (Liters),Recycled/harvested water used,250000
+env_totalEmployees,Total Employees (Env),Headcount for env. calculations,550
+env_ewasteGenerated,E-Waste Generated (kg),Total electronic waste produced,1100
+env_ewasteRecycled,E-Waste Recycled (kg),Amount recycled or refurbished,950
+env_electricityEmissionFactor,Electricity Emission Factor (kgCO2/kWh),Grid emission factor for your region,0.80
+env_dieselEmissionFactor,Diesel Emission Factor (kgCO2/L),Standard: 2.68 kgCO2/liter,2.68
+env_rainwaterHarvesting,Rainwater Harvesting Enabled,TRUE or FALSE,TRUE
+,,,
+👥 SOCIAL,,,
+soc_reportingYear,Reporting Year,e.g. 2025,2028
+soc_totalEmployees,Total Employees,Total headcount,550
+soc_womenEmployees,Women Employees,Female employee count,240
+soc_totalManagers,Total Managers,All manager-level roles,90
+soc_womenManagers,Women Managers,Female managers,40
+soc_employeesJoined,Employees Joined,New hires in reporting year,75
+soc_employeesLeft,Employees Left,Attrition in reporting year,35
+soc_totalTrainingHours,Total Training Hours,All employee training hours combined,14000
+soc_employeeSatisfactionScore,Employee Satisfaction Score,Score out of 10,8.2
+soc_healthInsuranceCovered,Health Insurance Covered,Employees with health coverage,550
+soc_mentalHealthProgramCovered,Mental Health Program Covered,Employees in mental health programs,350
+soc_workplaceInjuries,Workplace Injuries,Reported incidents in the year,3
+soc_totalWorkHours,Total Work Hours,Sum of all employee work hours,1056000
+soc_remoteEmployees,Remote Employees,Employees working remotely,180
+,,,
+🏛️ GOVERNANCE,,,
+gov_reportingYear,Reporting Year,e.g. 2025,2028
+gov_totalBoardMembers,Total Board Members,Size of the board of directors,12
+gov_independentDirectors,Independent Directors,Non-executive / independent members,8
+gov_femaleDirectors,Female Directors,Women on the board,5
+gov_boardMeetings,Board Meetings (Annual),Total meetings held in the year,10
+gov_independentAttendancePercent,Independent Attendance (%),Average attendance rate of ind. directors,95.0
+gov_cybersecurityIncidents,Cybersecurity Incidents,Reported security incidents,1
+gov_whistleblowerComplaints,Whistleblower Complaints,Complaints filed via whistleblower channel,2
+gov_complaintsResolved,Complaints Resolved,Whistleblower complaints resolved,2
+gov_antiCorruptionViolations,Anti-Corruption Violations,Violations of anti-corruption policy,0
+gov_dataPrivacyCompliant,Data Privacy Compliant,TRUE or FALSE (GDPR/local law),TRUE
+gov_iso27001Certified,ISO 27001 Certified,TRUE or FALSE,TRUE
