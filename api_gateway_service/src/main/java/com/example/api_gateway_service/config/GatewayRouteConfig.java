@@ -15,17 +15,17 @@ public class GatewayRouteConfig {
 
                 .route("auth-service", r -> r
                         .path("/auth/**")
-                        .uri("http://localhost:8081"))
+                        .uri("lb://AUTH-SERVICE"))
 
                 .route("core-service", r -> r
                         .path("/core/**")
                         .filters(f -> f.stripPrefix(1))
-                        .uri("http://localhost:8082"))
+                        .uri("lb://CORE-SERVICE"))
 
                 .route("report-service", r -> r
                         .path("/report/**")
                         .filters(f -> f.stripPrefix(1))
-                        .uri("http://localhost:8083"))
+                        .uri("lb://REPORT-SERVICE"))
 
                 .build();
     }
