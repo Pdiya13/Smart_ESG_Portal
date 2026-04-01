@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Leaf, Users, Shield, TrendingUp, ArrowRight, Activity, AlertCircle, Target, Calendar } from 'lucide-react';
+import { Leaf, Users, Shield, TrendingUp, ArrowRight, Activity, AlertCircle, Target, Calendar, Lightbulb, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
 import { useAuth } from '../../auth/context/AuthContext';
 import { Button } from '../../../shared/components/ui/Button';
 import api from '../../../utils/api';
@@ -48,6 +48,7 @@ const DashboardPage = () => {
     // Data aliases
     const displayScore = data?.score;
     const recommendations = data?.recommendations || [];
+    const trends = data?.trends || [];
     // The history list was added to the backend to sync raw DB data to the chart
     const chartData = data?.history || [];
     const metrics = data?.metrics || {};
@@ -381,6 +382,8 @@ const DashboardPage = () => {
                         )}
                     </div>
                 </div>
+
+
             </div>
         </section>
     );

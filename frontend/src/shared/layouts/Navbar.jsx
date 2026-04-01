@@ -26,6 +26,7 @@ const Navbar = () => {
                     <Link to="/" className={styles.navLink}>Home</Link>
                     <Link to="/features" className={styles.navLink}>Features</Link>
                     <Link to={user ? "/dashboard" : "/register"} className={styles.navLink}>ESG Rating</Link>
+                    {user && <Link to="/analytics" className={styles.navLink}>Analytics</Link>}
                 </div>
 
                 <div className={styles.actions}>
