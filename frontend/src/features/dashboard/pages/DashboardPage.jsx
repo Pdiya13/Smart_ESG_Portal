@@ -18,8 +18,17 @@ const DashboardPage = () => {
     const [expandedCard, setExpandedCard] = useState(null);
 
     // Generate a wider range of years to fix the bug where future years (e.g. 2027) can't be selected
-    const currentYear = new Date().getFullYear();
-    const availableYears = Array.from({ length: 9 }, (_, i) => currentYear - 4 + i).reverse();
+    const [availableYears, setAvailableYears] = useState([new Date().getFullYear()]);
+
+    // Update available years when history is loaded
+    useEffect(() => {
+        if (data?.history && data.history.length > 0) {
+            const historyYears = data.history.map(h => h.reportingYear);
+            // Ensure the selected year is in the list even if it was just changed
+            const uniqueYears = Array.from(new Set([...historyYears, selectedYear])).sort((a, b) => b - a);
+            setAvailableYears(uniqueYears);
+        }
+    }, [data, selectedYear]);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -55,6 +64,15 @@ const DashboardPage = () => {
 
     const formatMetricName = (key) => {
         return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+    };
+
+    const getRatingTheme = (rating) => {
+        if (!rating) return styles.ratingDefault;
+        const main = rating.charAt(0).toUpperCase();
+        if (main === 'A') return styles.ratingA;
+        if (main === 'B') return styles.ratingB;
+        if (main === 'C') return styles.ratingC;
+        return styles.ratingD;
     };
 
     const toggleCard = (cardName) => {
@@ -360,21 +378,41 @@ const DashboardPage = () => {
                                     {renderMetricsContent('gov', metrics.governanceMetrics, displayScore.governanceScore, 'pillarCardGov', 'pillarCardGov')}
                                 </motion.div>
 
-                                {/* Total Rating Card */}
+                                {/* Total Rating Card - Premium Overhaul */}
                                 <motion.div
-                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: 0.7 }}
-                                    className={styles.card}
-                                    style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))', border: '1px solid var(--color-primary)' }}
+                                    transition={{ delay: 0.7, type: 'spring', stiffness: 100 }}
+                                    className={`${styles.ratingCard} ${getRatingTheme(displayScore.rating)}`}
                                 >
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <h3 className="text-lg font-bold text-gray-800">Total Rating</h3>
-                                            <p className="text-sm text-gray-500">Overall ESG Performance</p>
+                                    <div className={styles.ratingHalo}></div>
+                                    <div className={styles.ratingContent}>
+                                        <div className={styles.ratingInfo}>
+                                            <div className={styles.ratingLabelGroup}>
+                                                <h3 className={styles.ratingMainTitle}>Total Rating</h3>
+                                                <p className={styles.ratingSubTitle}>Precision ESG Performance</p>
+                                            </div>
+                                            <div className={styles.ratingBadge}>
+                                                <span className={styles.ratingValue}>
+                                                    {displayScore.rating || 'N/A'}
+                                                </span>
+                                                <div className={styles.ratingPulse}></div>
+                                            </div>
                                         </div>
-                                        <div className="text-5xl font-black text-primary">
-                                            {displayScore.rating || 'N/A'}
+                                        <div className={styles.ratingFooter}>
+                                            <div className={styles.ratingProgressTrack}>
+                                                <motion.div 
+                                                    className={styles.ratingProgressBar}
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: displayScore.rating ? '100%' : '0%' }}
+                                                    transition={{ duration: 1, delay: 1 }}
+                                                />
+                                            </div>
+                                            <span className={styles.ratingStatus}>
+                                                {displayScore.rating === 'A' ? 'Exceptional' : 
+                                                 displayScore.rating === 'B' ? 'Strong Performance' : 
+                                                 displayScore.rating === 'C' ? 'Stable' : 'Adjustment Required'}
+                                            </span>
                                         </div>
                                     </div>
                                 </motion.div>

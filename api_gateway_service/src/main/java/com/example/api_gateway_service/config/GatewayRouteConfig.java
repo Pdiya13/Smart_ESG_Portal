@@ -27,6 +27,10 @@ public class GatewayRouteConfig {
                         .filters(f -> f.stripPrefix(1))
                         .uri("lb://REPORT-SERVICE"))
 
+                .route("ml-service", r -> r
+                        .path("/ml/**")
+                        .uri("lb://ML-SERVICE"))
+
                 .build();
     }
 }
