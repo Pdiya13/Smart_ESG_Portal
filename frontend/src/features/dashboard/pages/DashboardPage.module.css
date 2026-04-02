@@ -580,3 +580,183 @@
     font-size: 13px;
     margin-top: 12px;
 }
+
+/* =========================================
+   PREMIUM RATING OVERHAUL (GLASSMORPHISM 2.0)
+   ========================================= */
+
+.ratingCard {
+    position: relative;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.3); /* Glass Highlight */
+    border-radius: 28px;
+    padding: 32px;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.2),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    margin-top: 8px;
+}
+
+.ratingCard:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 40px 70px -15px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.ratingHalo {
+    position: absolute;
+    top: -45%;
+    right: -15%;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, var(--rating-color, #3b82f6) 0%, transparent 80%);
+    filter: blur(70px);
+    opacity: 0.25;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.ratingContent {
+    position: relative;
+    z-index: 1;
+}
+
+.ratingInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.ratingLabelGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ratingMainTitle {
+    font-size: 24px;
+    font-weight: 850;
+    letter-spacing: -0.03em;
+    color: #1a1a1a; /* Sharper contrast */
+    margin: 0;
+}
+
+.ratingSubTitle {
+    font-size: 14px;
+    color: #4b5563;
+    font-weight: 600;
+}
+
+.ratingBadge {
+    position: relative;
+    width: 105px;
+    height: 105px;
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border: 3px solid var(--rating-color, #3182ce);
+    border-radius: 26px;
+    box-shadow: 0 0 45px -10px var(--rating-color, #3182ce);
+}
+
+.ratingValue {
+    font-size: 60px;
+    font-weight: 950;
+    color: var(--rating-color, #3182ce);
+    text-shadow: 0 0 35px rgba(var(--rating-color-rgb), 0.5);
+    line-height: 1;
+}
+
+.ratingPulse {
+    position: absolute;
+    inset: -7px;
+    border: 3px solid var(--rating-color, #3182ce);
+    border-radius: 30px;
+    opacity: 0;
+    animation: ratingPulseAnim 3s infinite ease-out;
+}
+
+@keyframes ratingPulseAnim {
+    0% { transform: scale(0.98); opacity: 0.7; }
+    60% { transform: scale(1.18); opacity: 0; }
+    100% { transform: scale(1.18); opacity: 0; }
+}
+
+.ratingFooter {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ratingProgressTrack {
+    height: 10px;
+    background: rgba(0, 0, 0, 0.05); /* Better track contrast */
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.ratingProgressBar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--rating-color, #3182ce) 0%, var(--rating-accent, #6366f1) 100%);
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(var(--rating-color-rgb), 0.6);
+}
+
+.ratingStatus {
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--rating-color, #3182ce);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ratingStatus::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: var(--rating-color, #3182ce);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--rating-color, #3182ce);
+}
+
+/* HIGH-VIBRANCY COLOR TOKENS */
+.ratingA { 
+    --rating-color: #059669; /* Emerald */
+    --rating-accent: #10b981;
+    --rating-color-rgb: 5, 150, 105;
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.ratingB { 
+    --rating-color: #2563eb; /* Sapphire Blue */
+    --rating-accent: #6366f1;
+    --rating-color-rgb: 37, 99, 235;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.ratingC { 
+    --rating-color: #d97706; /* Solar Amber */
+    --rating-accent: #f59e0b;
+    --rating-color-rgb: 217, 119, 6;
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.ratingD { 
+    --rating-color: #dc2626; /* Deep Ruby */
+    --rating-accent: #ef4444;
+    --rating-color-rgb: 220, 38, 38;
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
