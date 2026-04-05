@@ -17,17 +17,17 @@ const DashboardPage = () => {
     const [showDetailedMetrics, setShowDetailedMetrics] = useState(false);
     const [expandedCard, setExpandedCard] = useState(null);
 
-    // Generate a wider range of years to fix the bug where future years (e.g. 2027) can't be selected
-    const [availableYears, setAvailableYears] = useState([new Date().getFullYear()]);
+    // Generate a wider range of years (current year and past 4 years = last 5 years)
+    const currentYear = new Date().getFullYear();
+    const defaultYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
+    const [availableYears, setAvailableYears] = useState(defaultYears);
 
     // Update available years when history is loaded
     useEffect(() => {
-        if (data?.history && data.history.length > 0) {
-            const historyYears = data.history.map(h => h.reportingYear);
-            // Ensure the selected year is in the list even if it was just changed
-            const uniqueYears = Array.from(new Set([...historyYears, selectedYear])).sort((a, b) => b - a);
-            setAvailableYears(uniqueYears);
-        }
+        const historyYears = data?.history ? data.history.map(h => h.reportingYear) : [];
+        // Combine default years (last 5) with database history and the currently selected year
+        const uniqueYears = Array.from(new Set([...defaultYears, ...historyYears, selectedYear])).sort((a, b) => b - a);
+        setAvailableYears(uniqueYears);
     }, [data, selectedYear]);
 
     useEffect(() => {
@@ -37,15 +37,19 @@ const DashboardPage = () => {
             setData(null);
             try {
                 const response = await api.get(`/report/reports/dashboard/${selectedYear}`);
-                // API Gateway/Report Service wraps responses in an ApiResponse object
-                setData(response.data.data);
-            } catch (err) {
-                if (err.response?.status === 404) {
-                    setError(`No ESG data found for ${selectedYear}.`);
-                } else {
-                    console.error("Failed to fetch dashboard data:", err);
-                    setError(err.response?.data?.message || `Failed to load dashboard data for ${selectedYear}.`);
+                const dashboardData = response.data.data;
+                setData(dashboardData);
+                
+                // If the selected year has no data, but history is available, 
+                // extracted the years from history to populate the selector.
+                if (dashboardData?.history) {
+                    const historyYears = dashboardData.history.map(h => h.reportingYear);
+                    const uniqueYears = Array.from(new Set([...historyYears, selectedYear])).sort((a, b) => b - a);
+                    setAvailableYears(uniqueYears);
                 }
+            } catch (err) {
+                console.error("Failed to fetch dashboard data:", err);
+                setError(err.response?.data?.message || `Failed to load dashboard data for ${selectedYear}.`);
             } finally {
                 setLoading(false);
             }
@@ -265,16 +269,41 @@ const DashboardPage = () => {
                             className={styles.yearSelectorBlock}
                         >
                             <h3 className={styles.yearSelectorTitle}><Calendar size={20} className="text-primary" /> Select Year to View Data</h3>
-                            <div className={styles.yearChips}>
-                                {availableYears.map(year => (
-                                    <button
-                                        key={year}
-                                        onClick={() => setSelectedYear(year)}
-                                        className={`${styles.yearChip} ${selectedYear === year ? styles.active : ''}`}
+                            <div className={styles.yearSelectorContainer}>
+                                <div className={styles.yearChips}>
+                                    {availableYears.filter(y => y >= currentYear - 4).map(year => (
+                                        <button
+                                            key={year}
+                                            onClick={() => setSelectedYear(year)}
+                                            className={`${styles.yearChip} ${selectedYear === year ? styles.active : ''}`}
+                                        >
+                                            {year}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className={styles.moreYearsWrapper}>
+                                    <span className={styles.moreLabel}>Older Data:</span>
+                                    <select 
+                                        className={styles.yearSelect}
+                                        value={selectedYear < currentYear - 4 ? selectedYear : ''}
+                                        onChange={(e) => setSelectedYear(Number(e.target.value))}
                                     >
-                                        {year}
-                                    </button>
-                                ))}
+                                        <option value="" disabled>Select Year...</option>
+                                        {(() => {
+                                            const historyYears = data?.history ? data.history.map(h => h.reportingYear) : [];
+                                            const minYear = Math.min(2010, ...historyYears);
+                                            const startDropdown = currentYear - 5;
+                                            if (startDropdown < minYear) return null;
+                                            
+                                            return Array.from(
+                                                { length: startDropdown - minYear + 1 }, 
+                                                (_, i) => startDropdown - i
+                                            ).map(year => (
+                                                <option key={year} value={year}>{year}</option>
+                                            ));
+                                        })()}
+                                    </select>
+                                </div>
                             </div>
                         </motion.div>
 

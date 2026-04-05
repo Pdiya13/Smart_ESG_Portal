@@ -17,15 +17,17 @@ const AnalyticsPage = () => {
     const [predictionLoading, setPredictionLoading] = useState(false);
     const [predictionError, setPredictionError] = useState(null);
 
-    const [availableYears, setAvailableYears] = useState([new Date().getFullYear()]);
+    // Generate a wider range of years (current year and past 4 years = last 5 years)
+    const currentYear = new Date().getFullYear();
+    const defaultYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
+    const [availableYears, setAvailableYears] = useState(defaultYears);
 
     // Update available years when history is loaded
     useEffect(() => {
-        if (data?.history && data.history.length > 0) {
-            const historyYears = data.history.map(h => h.reportingYear);
-            const uniqueYears = Array.from(new Set([...historyYears, selectedYear])).sort((a, b) => b - a);
-            setAvailableYears(uniqueYears);
-        }
+        const historyYears = data?.history ? data.history.map(h => h.reportingYear) : [];
+        // Combine default years (last 5) with database history and the currently selected year
+        const uniqueYears = Array.from(new Set([...defaultYears, ...historyYears, selectedYear])).sort((a, b) => b - a);
+        setAvailableYears(uniqueYears);
     }, [data, selectedYear]);
 
     // Fetch dashboard data (includes history)
@@ -213,8 +215,9 @@ const AnalyticsPage = () => {
                     className={styles.yearSelectorBlock}
                 >
                     <h3 className={styles.yearSelectorTitle}><Calendar size={20} className="text-primary" /> Select Year to View Data</h3>
+                <div className={styles.yearSelectorContainer}>
                     <div className={styles.yearChips}>
-                        {availableYears.map(year => (
+                        {availableYears.filter(y => y >= currentYear - 4).map(year => (
                             <button
                                 key={year}
                                 onClick={() => setSelectedYear(year)}
@@ -224,6 +227,30 @@ const AnalyticsPage = () => {
                             </button>
                         ))}
                     </div>
+                    <div className={styles.moreYearsWrapper}>
+                        <span className={styles.moreLabel}>Older Data:</span>
+                        <select 
+                            className={styles.yearSelect}
+                            value={selectedYear < currentYear - 4 ? selectedYear : ''}
+                            onChange={(e) => setSelectedYear(Number(e.target.value))}
+                        >
+                            <option value="" disabled>Select Year...</option>
+                            {(() => {
+                                const historyYears = data?.history ? data.history.map(h => h.reportingYear) : [];
+                                const minYear = Math.min(2010, ...historyYears);
+                                const startDropdown = currentYear - 5;
+                                if (startDropdown < minYear) return null;
+                                
+                                return Array.from(
+                                    { length: startDropdown - minYear + 1 }, 
+                                    (_, i) => startDropdown - i
+                                ).map(year => (
+                                    <option key={year} value={year}>{year}</option>
+                                ));
+                            })()}
+                        </select>
+                    </div>
+                </div>
                 </motion.div>
 
                 {loading ? (

@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,16 +37,25 @@ public class SocialService {
         SocialMetric metric = SocialFormulaUtil.calculateAll(saved);
         metricRepository.save(metric);
 
-        List<SocialBenchmark> active = List.of(
-                benchmarkRepository.findLatest(companyId,"WOMEN_WORKFORCE"),
-                benchmarkRepository.findLatest(companyId,"WOMEN_LEADERSHIP"),
-                benchmarkRepository.findLatest(companyId,"ATTRITION"),
-                benchmarkRepository.findLatest(companyId,"TRAINING"),
-                benchmarkRepository.findLatest(companyId,"SATISFACTION"),
-                benchmarkRepository.findLatest(companyId,"INSURANCE"),
-                benchmarkRepository.findLatest(companyId,"LTIFR"),
-                benchmarkRepository.findLatest(companyId,"MENTAL_HEALTH")
+        List<String> kpis = List.of(
+                "WOMEN_WORKFORCE", "WOMEN_LEADERSHIP", "ATTRITION",
+                "TRAINING", "SATISFACTION", "INSURANCE", "LTIFR", "MENTAL_HEALTH"
         );
+        List<SocialBenchmark> active = new ArrayList<>();
+        List<String> missing = new ArrayList<>();
+
+        for (String kpi : kpis) {
+            SocialBenchmark b = benchmarkRepository.findLatest(companyId, kpi);
+            if (b == null) {
+                missing.add(kpi);
+            } else {
+                active.add(b);
+            }
+        }
+
+        if (!missing.isEmpty()) {
+            throw new IllegalArgumentException("Missing Social benchmarks: " + String.join(", ", missing));
+        }
 
         return SocialScoreEngine.calculateScore(metric, active);
     }

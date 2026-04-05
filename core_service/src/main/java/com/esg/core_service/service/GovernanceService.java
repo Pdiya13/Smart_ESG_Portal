@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,19 +41,28 @@ public class GovernanceService {
 
         metricRepo.save(metric);
 
-        List<GovernanceBenchmark> benchmarks = List.of(
-                benchmarkRepo.findLatest(companyId, "BOARD_INDEPENDENCE"),
-                benchmarkRepo.findLatest(companyId, "FEMALE_DIRECTORS"),
-                benchmarkRepo.findLatest(companyId, "BOARD_MEETINGS"),
-                benchmarkRepo.findLatest(companyId, "ATTENDANCE"),
-                benchmarkRepo.findLatest(companyId, "DATA_PRIVACY"),
-                benchmarkRepo.findLatest(companyId, "ISO_27001"),
-                benchmarkRepo.findLatest(companyId, "CYBER_INCIDENTS"),
-                benchmarkRepo.findLatest(companyId, "WHISTLEBLOWER_RESOLUTION"),
-                benchmarkRepo.findLatest(companyId, "ANTI_CORRUPTION")
+        List<String> kpis = List.of(
+                "BOARD_INDEPENDENCE", "FEMALE_DIRECTORS", "BOARD_MEETINGS",
+                "ATTENDANCE", "DATA_PRIVACY", "ISO_27001", "CYBER_INCIDENTS",
+                "WHISTLEBLOWER_RESOLUTION", "ANTI_CORRUPTION"
         );
+        List<GovernanceBenchmark> active = new ArrayList<>();
+        List<String> missing = new ArrayList<>();
 
-        return GovernanceScoreEngine.calculateScore(metric, benchmarks);
+        for (String kpi : kpis) {
+            GovernanceBenchmark b = benchmarkRepo.findLatest(companyId, kpi);
+            if (b == null) {
+                missing.add(kpi);
+            } else {
+                active.add(b);
+            }
+        }
+
+        if (!missing.isEmpty()) {
+            throw new IllegalArgumentException("Missing Governance benchmarks: " + String.join(", ", missing));
+        }
+
+        return GovernanceScoreEngine.calculateScore(metric, active);
     }
 
     public GovernanceRequestDto getReportData(UUID companyId, Integer year) {

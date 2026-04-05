@@ -14,11 +14,18 @@ public class GlobalExceptionHandler {
 
         ErrorResponse response = new ErrorResponse(
                 "INVALID_BENCHMARK",
-                ex.getMessage()
-        );
+                ex.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(response);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+        ErrorResponse response = new ErrorResponse(
+                "INTERNAL_ERROR",
+                ex.getMessage());
+        return ResponseEntity.status(500).body(response);
     }
 }
