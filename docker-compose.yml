@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  eureka-server:
+    build:
+      context: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - esg-network
+
+  api-gateway:
+    build:
+      context: ./api_gateway_service
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_URL=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+    networks:
+      - esg-network
+
+  auth-service:
+    build:
+      context: ./auth_service
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      - EUREKA_URL=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+    networks:
+      - esg-network
+
+  core-service:
+    build:
+      context: ./core_service
+    container_name: core-service
+    ports:
+      - "8082:8082"
+    environment:
+      - EUREKA_URL=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+    networks:
+      - esg-network
+
+  report-service:
+    build:
+      context: ./report_service
+    container_name: report-service
+    ports:
+      - "8083:8083"
+    environment:
+      - EUREKA_URL=http://eureka-server:8761/eureka/
+      - CORE_SERVICE_URL=http://core-service:8082
+    depends_on:
+      - eureka-server
+      - core-service
+    networks:
+      - esg-network
+
+  ml-service:
+    build:
+      context: ./ml_service
+    container_name: ml-service
+    ports:
+      - "8000:8000"
+    environment:
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+    depends_on:
+      - eureka-server
+    networks:
+      - esg-network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - esg-network
+    depends_on:
+      - api-gateway
+
+networks:
+  esg-network:
+    driver: bridge
