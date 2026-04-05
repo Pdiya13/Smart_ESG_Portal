@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,14 +38,22 @@ public class EnvironmentService {
         EnvironmentMetric metric = EnvironmentFormulaUtil.calculateAll(saved);
         metricRepository.save(metric);
 
-        List<EnvironmentBenchmark> active = List.of(
-                benchmarkRepository.findLatest(companyId,"EUI"),
-                benchmarkRepository.findLatest(companyId,"RENEWABLE_PERCENT"),
-                benchmarkRepository.findLatest(companyId,"PUE"),
-                benchmarkRepository.findLatest(companyId,"WATER_PER_EMP"),
-                benchmarkRepository.findLatest(companyId,"EWASTE_RECYCLE"),
-                benchmarkRepository.findLatest(companyId,"CARBON_INTENSITY")
-        );
+        List<String> kpis = List.of("EUI", "RENEWABLE_PERCENT", "PUE", "WATER_PER_EMP", "EWASTE_RECYCLE", "CARBON_INTENSITY");
+        List<EnvironmentBenchmark> active = new ArrayList<>();
+        List<String> missing = new ArrayList<>();
+
+        for (String kpi : kpis) {
+            EnvironmentBenchmark b = benchmarkRepository.findLatest(companyId, kpi);
+            if (b == null) {
+                missing.add(kpi);
+            } else {
+                active.add(b);
+            }
+        }
+
+        if (!missing.isEmpty()) {
+            throw new IllegalArgumentException("Missing Environment benchmarks: " + String.join(", ", missing));
+        }
 
         return EnvironmentScoreEngine.calculateScore(metric, active);
     }

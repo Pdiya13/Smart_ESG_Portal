@@ -3,6 +3,7 @@ package com.esg.report_service.client;
 import com.esg.report_service.dto.EsgScoreDTO;
 import com.esg.report_service.dto.MetricBreakdownDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,9 +18,12 @@ public class CoreServiceClient {
 
     private final WebClient.Builder webClientBuilder;
 
+    @Value("${core.service.base-url:http://localhost:8082}")
+    private String coreServiceBaseUrl;
+
     private WebClient client() {
         return webClientBuilder
-                .baseUrl("http://localhost:8082")
+                .baseUrl(coreServiceBaseUrl)
                 .build();
     }
 

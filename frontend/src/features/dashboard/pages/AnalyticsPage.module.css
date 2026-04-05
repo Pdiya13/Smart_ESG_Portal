@@ -113,10 +113,56 @@
     gap: 8px;
 }
 
+.yearSelectorContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
 .yearChips {
     display: flex;
     flex-wrap: wrap;
+    gap: 10px;
+}
+
+.moreYearsWrapper {
+    display: flex;
+    align-items: center;
     gap: 12px;
+    padding-left: 20px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.moreLabel {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-muted-foreground);
+    white-space: nowrap;
+}
+
+.yearSelect {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--color-foreground);
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+}
+
+.yearSelect:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-primary);
+}
+
+.yearSelect option {
+    background: #1e293b;
+    color: white;
 }
 
 .yearChip {

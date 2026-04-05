@@ -3,7 +3,6 @@ package com.esg.report_service.service;
 import com.esg.report_service.client.CoreServiceClient;
 import com.esg.report_service.dto.*;
 import com.esg.report_service.entity.AnnualReportSnapshot;
-import com.esg.report_service.exception.ResourceNotFoundException;
 import com.esg.report_service.repository.AnnualReportSnapshotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,16 +23,7 @@ public class ReportAggregatorService {
 
     public DashboardResponseDTO build(UUID companyId, Integer year) {
 
-        EsgScoreDTO score =
-                coreClient.getEsgScore(companyId, year).block();
-
-        if (score == null) {
-            throw new ResourceNotFoundException("No ESG data found for year " + year);
-        }
-
-        MetricBreakdownDTO metrics =
-                coreClient.getMetrics(companyId, year).block();
-
+        // 1. Fetch available scores for the company first
         List<EsgScoreDTO> allScores =
                 coreClient.getAllEsgScores(companyId).block();
 
@@ -41,20 +31,32 @@ public class ReportAggregatorService {
             allScores = Collections.emptyList();
         }
 
-        List<TrendDTO> trends =
-                trendService.calculateTrends(allScores);
+        // 2. Try to fetch the score for the requested year
+        EsgScoreDTO score =
+                coreClient.getEsgScore(companyId, year).block();
 
-        List<RecommendationDTO> recommendations =
-                recommendationService.generate(score);
-
-        saveSnapshot(companyId, score);
-
+        // 3. Initialize the response DTO
         DashboardResponseDTO dto = new DashboardResponseDTO();
-        dto.setScore(score);
-        dto.setMetrics(metrics);
-        dto.setTrends(trends);
-        dto.setRecommendations(recommendations);
         dto.setHistory(allScores);
+
+        // 4. If the requested year has data, populate the full dashboard
+        if (score != null) {
+            MetricBreakdownDTO metrics =
+                    coreClient.getMetrics(companyId, year).block();
+
+            List<TrendDTO> trends =
+                    trendService.calculateTrends(allScores);
+
+            List<RecommendationDTO> recommendations =
+                    recommendationService.generate(score);
+
+            saveSnapshot(companyId, score);
+
+            dto.setScore(score);
+            dto.setMetrics(metrics);
+            dto.setTrends(trends);
+            dto.setRecommendations(recommendations);
+        }
 
         return dto;
     }
