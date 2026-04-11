@@ -31,7 +31,7 @@ public class EnvironmentService {
     private final EnvironmentBenchmarkRepository benchmarkRepository;
     private final ModelMapper modelMapper;
 
-    @CacheEvict(value = {"env_report", "esg_metrics", "esg_scores", "all_esg_scores"}, allEntries = true)
+    @CacheEvict(value = {"env_report", "esg_metrics", "esg_scores", "all_esg_scores", "dashboard_data"}, allEntries = true)
     public float submit(UUID companyId, EnvironmentRequestDto dto) {
 
         Environment env = modelMapper.map(dto, Environment.class);

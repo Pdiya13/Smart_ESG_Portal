@@ -31,7 +31,7 @@ public class GovernanceService {
     private final GovernanceBenchmarkRepository benchmarkRepo;
     private final ModelMapper mapper;
 
-    @CacheEvict(value = {"gov_report", "esg_metrics", "esg_scores", "all_esg_scores"}, allEntries = true)
+    @CacheEvict(value = {"gov_report", "esg_metrics", "esg_scores", "all_esg_scores", "dashboard_data"}, allEntries = true)
     public float submit(UUID companyId, GovernanceRequestDto dto) {
 
         Governance g = mapper.map(dto, Governance.class);

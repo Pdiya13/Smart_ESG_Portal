@@ -63,18 +63,30 @@ public class ReportAggregatorService {
 
     private void saveSnapshot(UUID companyId, EsgScoreDTO score) {
 
-        AnnualReportSnapshot snapshot =
-                AnnualReportSnapshot.builder()
-                        .companyId(companyId)
-                        .reportingYear(score.getReportingYear())
-                        .environmentScore(score.getEnvironmentScore())
-                        .socialScore(score.getSocialScore())
-                        .governanceScore(score.getGovernanceScore())
-                        .totalEsgScore(score.getTotalEsgScore())
-                        .rating(score.getRating())
-                        .generatedAt(LocalDateTime.now())
-                        .build();
+        AnnualReportSnapshot existing = snapshotRepo.findTopByCompanyIdAndReportingYearOrderByGeneratedAtDesc(companyId, score.getReportingYear());
 
-        snapshotRepo.save(snapshot);
+        if (existing != null) {
+            existing.setEnvironmentScore(score.getEnvironmentScore());
+            existing.setSocialScore(score.getSocialScore());
+            existing.setGovernanceScore(score.getGovernanceScore());
+            existing.setTotalEsgScore(score.getTotalEsgScore());
+            existing.setRating(score.getRating());
+            existing.setGeneratedAt(LocalDateTime.now());
+            snapshotRepo.save(existing);
+        } else {
+            AnnualReportSnapshot snapshot =
+                    AnnualReportSnapshot.builder()
+                            .companyId(companyId)
+                            .reportingYear(score.getReportingYear())
+                            .environmentScore(score.getEnvironmentScore())
+                            .socialScore(score.getSocialScore())
+                            .governanceScore(score.getGovernanceScore())
+                            .totalEsgScore(score.getTotalEsgScore())
+                            .rating(score.getRating())
+                            .generatedAt(LocalDateTime.now())
+                            .build();
+
+            snapshotRepo.save(snapshot);
+        }
     }
 }

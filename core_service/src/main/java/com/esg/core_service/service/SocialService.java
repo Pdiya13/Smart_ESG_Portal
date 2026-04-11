@@ -30,7 +30,7 @@ public class SocialService {
     private final SocialBenchmarkRepository benchmarkRepository;
     private final ModelMapper mapper;
 
-    @CacheEvict(value = {"social_report", "esg_metrics", "esg_scores", "all_esg_scores"}, allEntries = true)
+    @CacheEvict(value = {"social_report", "esg_metrics", "esg_scores", "all_esg_scores", "dashboard_data"}, allEntries = true)
     public float submit(UUID companyId, SocialRequestDto dto) {
 
         Social s = mapper.map(dto, Social.class);

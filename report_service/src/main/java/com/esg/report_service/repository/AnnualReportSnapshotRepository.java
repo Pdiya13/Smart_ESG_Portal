@@ -11,4 +11,6 @@ public interface AnnualReportSnapshotRepository
 
     List<AnnualReportSnapshot>
     findByCompanyIdOrderByReportingYearAsc(UUID companyId);
+
+    AnnualReportSnapshot findTopByCompanyIdAndReportingYearOrderByGeneratedAtDesc(UUID companyId, Integer reportingYear);
 }
