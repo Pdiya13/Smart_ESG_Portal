@@ -14,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,7 @@ public class EnvironmentService {
     private final EnvironmentBenchmarkRepository benchmarkRepository;
     private final ModelMapper modelMapper;
 
+    @CacheEvict(value = {"env_report", "esg_metrics", "esg_scores", "all_esg_scores"}, allEntries = true)
     public float submit(UUID companyId, EnvironmentRequestDto dto) {
 
         Environment env = modelMapper.map(dto, Environment.class);
@@ -58,6 +62,7 @@ public class EnvironmentService {
         return EnvironmentScoreEngine.calculateScore(metric, active);
     }
 
+    @Cacheable(value = "env_report", key = "#companyId + '_' + #year")
     public EnvironmentRequestDto getReportData(UUID companyId, Integer year) {
 
         System.out.println("CompanyId received: " + companyId);
