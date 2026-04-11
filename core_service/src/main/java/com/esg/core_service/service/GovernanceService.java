@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ public class GovernanceService {
     private final GovernanceBenchmarkRepository benchmarkRepo;
     private final ModelMapper mapper;
 
+    @CacheEvict(value = {"gov_report", "esg_metrics", "esg_scores", "all_esg_scores", "dashboard_data"}, allEntries = true)
     public float submit(UUID companyId, GovernanceRequestDto dto) {
 
         Governance g = mapper.map(dto, Governance.class);
@@ -65,6 +69,7 @@ public class GovernanceService {
         return GovernanceScoreEngine.calculateScore(metric, active);
     }
 
+    @Cacheable(value = "gov_report", key = "#companyId + '_' + #year")
     public GovernanceRequestDto getReportData(UUID companyId, Integer year) {
 
         System.out.println("CompanyId received: " + companyId);

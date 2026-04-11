@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +30,7 @@ public class SocialService {
     private final SocialBenchmarkRepository benchmarkRepository;
     private final ModelMapper mapper;
 
+    @CacheEvict(value = {"social_report", "esg_metrics", "esg_scores", "all_esg_scores", "dashboard_data"}, allEntries = true)
     public float submit(UUID companyId, SocialRequestDto dto) {
 
         Social s = mapper.map(dto, Social.class);
@@ -60,6 +64,7 @@ public class SocialService {
         return SocialScoreEngine.calculateScore(metric, active);
     }
 
+    @Cacheable(value = "social_report", key = "#companyId + '_' + #year")
     public SocialRequestDto getReportData(UUID companyId, Integer year) {
 
         System.out.println("CompanyId received: " + companyId);

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import org.springframework.cache.annotation.Cacheable;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,6 +28,7 @@ public class ESGQueryService {
     // ==============================
     // 1️⃣ Get Score By Year
     // ==============================
+    @Cacheable(value = "esg_scores", key = "#companyId + '_' + #year")
     public EsgScoreResponseDTO getScoreByYear(UUID companyId, Integer year) {
 
         Optional<ESGScore> optionalScore =
@@ -42,6 +45,7 @@ public class ESGQueryService {
     // ==============================
     // 2️⃣ Get All Scores
     // ==============================
+    @Cacheable(value = "all_esg_scores", key = "#companyId")
     public List<EsgScoreResponseDTO> getAllScores(UUID companyId) {
 
         return scoreRepository
@@ -54,6 +58,7 @@ public class ESGQueryService {
     // ==============================
     // 3️⃣ Get KPI Metrics
     // ==============================
+    @Cacheable(value = "esg_metrics", key = "#companyId + '_' + #year")
     public MetricBreakdownResponseDTO getMetrics(UUID companyId, Integer year) {
 
         Optional<EnvironmentMetric> env =

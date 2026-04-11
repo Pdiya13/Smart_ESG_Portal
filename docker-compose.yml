@@ -88,6 +88,14 @@ services:
     depends_on:
       - api-gateway
 
+  redis:
+    image: redis:alpine
+    container_name: redis-service
+    ports:
+      - "6379:6379"
+    networks:
+      - esg-network
+
 networks:
   esg-network:
     driver: bridge
