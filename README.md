@@ -32,7 +32,7 @@ The application relies on a robust and scalable ecosystem uniquely selected for 
 
 Smart ESG Portal isolates distinct domain logic into the following containerized execution units:
 
-| Container Handle / Service | Internal Port | Environment | Core Duty within Topology |
+| Container Handle / Service | Internal Port | Environment | Core Duty|
 | :--- | :---: | :--- | :--- |
 | `eureka-server` | `8761` | Java Runtime | The decentralized phonebook registering active microservices locally. |
 | `api-gateway` | `8080` | Java Runtime | Front-facing gatekeeper authenticating JWTs and distributing edge traffic. |
