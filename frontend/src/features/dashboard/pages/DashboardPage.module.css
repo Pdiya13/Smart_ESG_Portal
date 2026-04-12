@@ -243,11 +243,60 @@
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
-/* Chart Area */
-.chartContainer {
-    height: 380px;
+/* Chart Area Layout */
+.chartLayout {
+    display: flex;
+    height: 320px;
     width: 100%;
     margin-top: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+}
+
+.yAxisFixed {
+    width: 45px;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.05); /* Minimalist glass effect */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.chartScrollArea {
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 20px; /* Space for scrollbar */
+    cursor: grab;
+    position: relative;
+}
+
+.chartScrollArea:active {
+    cursor: grabbing;
+}
+
+/* Custom Premium Scrollbar for the Chart */
+.chartScrollArea::-webkit-scrollbar {
+    height: 6px;
+}
+
+.chartScrollArea::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.chartScrollArea::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, var(--color-primary), #3b82f6);
+    border-radius: 10px;
+}
+
+.chartScrollArea::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #10b981, #2563eb);
 }
 
 /* Trends & Recommendations */
