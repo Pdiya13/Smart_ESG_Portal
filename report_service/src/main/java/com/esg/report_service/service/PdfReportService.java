@@ -2,9 +2,13 @@ package com.esg.report_service.service;
 
 import com.esg.report_service.dto.DashboardResponseDTO;
 import com.esg.report_service.dto.MetricBreakdownDTO;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
@@ -24,58 +28,67 @@ public class PdfReportService {
             PdfDocument pdfDocument = new PdfDocument(writer);
             Document document = new Document(pdfDocument);
 
+            document.setMargins(50, 50, 50, 50);
+
             // Title
             document.add(new Paragraph("ESG SUSTAINABILITY REPORT")
                     .setBold()
-                    .setFontSize(22)
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setMarginBottom(10));
+                    .setFontSize(20)
+                    .setTextAlignment(TextAlignment.LEFT)
+                    .setMarginBottom(5));
 
             document.add(new Paragraph("Company: TCS") // Hardcoded for now as per user request example
-                    .setBold()
-                    .setFontSize(14));
+                    .setFontSize(12)
+                    .setFontColor(ColorConstants.DARK_GRAY));
 
             if (dashboard.getScore() != null && dashboard.getScore().getReportingYear() != null) {
                 document.add(new Paragraph("Reporting Year: " + dashboard.getScore().getReportingYear())
-                        .setFontSize(12));
+                        .setFontSize(12)
+                        .setFontColor(ColorConstants.DARK_GRAY)
+                        .setMarginBottom(20));
+            } else {
+                document.add(new Paragraph("\n"));
             }
-
-            document.add(new Paragraph("\n"));
 
             // Summary Section
             if (dashboard.getScore() != null) {
-                document.add(new Paragraph("Summary").setBold().setFontSize(16));
-                Table summaryTable = new Table(UnitValue.createPercentArray(new float[] { 50, 50 }))
-                        .useAllAvailableWidth();
-                summaryTable.addCell(new Cell().add(new Paragraph("Total ESG Score").setBold()));
-                summaryTable.addCell(
-                        new Cell().add(new Paragraph(String.valueOf(dashboard.getScore().getTotalEsgScore()))));
-                summaryTable.addCell(new Cell().add(new Paragraph("Rating").setBold()));
-                summaryTable.addCell(new Cell().add(new Paragraph(
-                        dashboard.getScore().getRating() != null ? dashboard.getScore().getRating() : "N/A")));
+                document.add(new Paragraph("Summary")
+                        .setBold()
+                        .setFontSize(14)
+                        .setMarginBottom(10)
+                        .setBorderBottom(new SolidBorder(ColorConstants.LIGHT_GRAY, 1)));
+                
+                Table summaryTable = new Table(UnitValue.createPercentArray(new float[] { 30, 70 }))
+                        .useAllAvailableWidth()
+                        .setMarginBottom(20);
+                
+                addCleanCell(summaryTable, "Total ESG Score", String.valueOf(dashboard.getScore().getTotalEsgScore()));
+                addCleanCell(summaryTable, "Rating", dashboard.getScore().getRating() != null ? dashboard.getScore().getRating() : "N/A");
                 document.add(summaryTable);
             } else {
-                document.add(new Paragraph("No summary data available").setItalic());
+                document.add(new Paragraph("No summary data available").setItalic().setFontColor(ColorConstants.GRAY));
             }
-
-            document.add(new Paragraph("\n"));
 
             // Metrics Breakdown
             if (dashboard.getMetrics() != null) {
                 MetricBreakdownDTO metrics = dashboard.getMetrics();
 
+                document.add(new Paragraph("Detailed Metrics")
+                        .setBold()
+                        .setFontSize(14)
+                        .setMarginBottom(10)
+                        .setBorderBottom(new SolidBorder(ColorConstants.LIGHT_GRAY, 1)));
+
                 // Environment
-                addMetricTable(document, "Environment Metrics", (Map<String, Object>) metrics.getEnvironmentMetrics());
-                document.add(new Paragraph("\n"));
-
+                addMetricTable(document, "Environment", (Map<String, Object>) metrics.getEnvironmentMetrics());
+                
                 // Social
-                addMetricTable(document, "Social Metrics", (Map<String, Object>) metrics.getSocialMetrics());
-                document.add(new Paragraph("\n"));
-
+                addMetricTable(document, "Social", (Map<String, Object>) metrics.getSocialMetrics());
+                
                 // Governance
-                addMetricTable(document, "Governance Metrics", (Map<String, Object>) metrics.getGovernanceMetrics());
+                addMetricTable(document, "Governance", (Map<String, Object>) metrics.getGovernanceMetrics());
             } else {
-                document.add(new Paragraph("Detailed metrics breakdown not available").setItalic());
+                document.add(new Paragraph("Detailed metrics breakdown not available").setItalic().setFontColor(ColorConstants.GRAY));
             }
 
             document.close();
@@ -88,17 +101,29 @@ public class PdfReportService {
         }
     }
 
+    private void addCleanCell(Table table, String label, String value) {
+        Cell labelCell = new Cell().add(new Paragraph(label).setFontColor(ColorConstants.DARK_GRAY))
+                .setBorder(Border.NO_BORDER)
+                .setPadding(5);
+        Cell valueCell = new Cell().add(new Paragraph(value).setBold())
+                .setBorder(Border.NO_BORDER)
+                .setPadding(5);
+        
+        table.addCell(labelCell);
+        table.addCell(valueCell);
+    }
+
     private void addMetricTable(Document document, String title, Map<String, Object> dataMap) {
-        document.add(new Paragraph(title).setBold().setFontSize(14).setMarginBottom(5));
+        document.add(new Paragraph(title).setBold().setFontSize(12).setMarginTop(10).setMarginBottom(5));
 
         if (dataMap == null || dataMap.isEmpty()) {
-            document.add(new Paragraph("No data available for this section").setItalic());
+            document.add(new Paragraph("No data available").setItalic().setFontColor(ColorConstants.GRAY).setMarginBottom(10));
             return;
         }
 
-        Table table = new Table(UnitValue.createPercentArray(new float[] { 60, 40 })).useAllAvailableWidth();
-        table.addCell(new Cell().add(new Paragraph("Metric").setBold()));
-        table.addCell(new Cell().add(new Paragraph("Value").setBold()));
+        Table table = new Table(UnitValue.createPercentArray(new float[] { 70, 30 })).useAllAvailableWidth().setMarginBottom(15);
+        
+        Border lightBorder = new SolidBorder(new DeviceGray(0.9f), 1f);
 
         for (Map.Entry<String, Object> entry : dataMap.entrySet()) {
             String key = entry.getKey();
@@ -108,8 +133,19 @@ public class PdfReportService {
                 continue;
             }
 
-            table.addCell(new Cell().add(new Paragraph(formatKey(key))));
-            table.addCell(new Cell().add(new Paragraph(String.valueOf(entry.getValue()))));
+            Cell cell1 = new Cell().add(new Paragraph(formatKey(key)).setFontSize(10).setFontColor(ColorConstants.DARK_GRAY))
+                    .setBorder(Border.NO_BORDER)
+                    .setBorderBottom(lightBorder)
+                    .setPadding(8);
+            
+            Cell cell2 = new Cell().add(new Paragraph(String.valueOf(entry.getValue())).setFontSize(10).setBold())
+                    .setBorder(Border.NO_BORDER)
+                    .setBorderBottom(lightBorder)
+                    .setTextAlignment(TextAlignment.RIGHT)
+                    .setPadding(8);
+
+            table.addCell(cell1);
+            table.addCell(cell2);
         }
         document.add(table);
     }
