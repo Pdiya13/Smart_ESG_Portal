@@ -705,31 +705,9 @@ const ESGSubmitPage = () => {
 
                 {/* ═══ CSV / EXCEL UPLOAD MODE ═══ */}
                 {submitMode === 'csv' && (
-                    <motion.div key="csv-mode" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className={styles.formCard}>
+                    <motion.div key="csv-mode" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className={styles.csvPanel}>
 
-                        {/* CSV Alerts */}
-                        <AnimatePresence mode="wait">
-                            {csvSuccess && (
-                                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                                    style={{
-                                        display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px', marginBottom: '16px',
-                                        borderRadius: '10px', background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.4)', color: '#6ee7b7'
-                                    }}>
-                                    <CheckCircle2 size={16} /> {csvSuccess}
-                                </motion.div>
-                            )}
-                            {csvError && (
-                                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                                    style={{
-                                        display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px', marginBottom: '16px',
-                                        borderRadius: '10px', background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.4)', color: '#fca5a5'
-                                    }}>
-                                    <AlertCircle size={16} /> {csvError}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        {/* CSV Final Score */}
+                        {/* CSV Final Score Overlay / Results */}
                         {csvFinalScore && (
                             <motion.div initial={{ scale: 0.92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
                                 className={styles.successCardContainer}>
@@ -763,175 +741,183 @@ const ESGSubmitPage = () => {
                             </motion.div>
                         )}
 
-                        {!csvFinalScore && (<>
+                        {!csvFinalScore && (
+                            <>
+                                {/* Global Alerts for CSV Page */}
+                                <AnimatePresence mode="wait">
+                                    {csvSuccess && (
+                                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={styles.alertSuccess}>
+                                            <CheckCircle2 size={18} /> {csvSuccess}
+                                        </motion.div>
+                                    )}
+                                    {csvError && (
+                                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={styles.alertError}>
+                                            <AlertCircle size={18} /> {csvError}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
 
-                            {/* ── Step 1: Download Template ── */}
-                            <div className={styles.formContainer} style={{ marginBottom: '20px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-                                    <div style={{
-                                        width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg,#6ee7b7,#10b981)',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.8rem', color: '#fff', flexShrink: 0
-                                    }}>1</div>
-                                    <div>
-                                        <p style={{ margin: 0, fontWeight: 700, fontSize: '0.97rem', color: '#e2e8f0' }}>Download the Template</p>
-                                        <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b' }}>Fill Column D with your data. Do not rename Column A keys.</p>
-                                    </div>
-                                </div>
-                                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                                    <button onClick={() => downloadTemplate('csv')} style={{
-                                        display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px',
-                                        borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem',
-                                        background: 'linear-gradient(135deg,rgba(16,185,129,0.18),rgba(16,185,129,0.06))',
-                                        border: '1px solid rgba(16,185,129,0.45)', color: '#6ee7b7', transition: 'all 0.2s'
-                                    }}><Download size={15} /> Download CSV Template</button>
-                                    <button onClick={() => downloadTemplate('xlsx')} style={{
-                                        display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px',
-                                        borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem',
-                                        background: 'linear-gradient(135deg,rgba(99,102,241,0.18),rgba(99,102,241,0.06))',
-                                        border: '1px solid rgba(99,102,241,0.45)', color: '#a5b4fc', transition: 'all 0.2s'
-                                    }}><FileSpreadsheet size={15} /> Download Excel Template (.xlsx)</button>
-                                </div>
-                            </div>
-
-                            {/* ── Step 2: Upload File ── */}
-                            <div className={styles.formContainer} style={{ marginBottom: '20px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-                                    <div style={{
-                                        width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg,#a5b4fc,#6366f1)',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.8rem', color: '#fff', flexShrink: 0
-                                    }}>2</div>
-                                    <div>
-                                        <p style={{ margin: 0, fontWeight: 700, fontSize: '0.97rem', color: '#e2e8f0' }}>Upload Your Filled File</p>
-                                        <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b' }}>Supports .csv, .xlsx, .xls</p>
-                                    </div>
-                                </div>
-                                <div
-                                    onDragOver={(e) => { e.preventDefault(); setCsvDragOver(true); }}
-                                    onDragLeave={() => setCsvDragOver(false)}
-                                    onDrop={(e) => { e.preventDefault(); setCsvDragOver(false); processFile(e.dataTransfer.files[0]); }}
-                                    onClick={() => fileInputRef.current?.click()}
-                                    style={{
-                                        border: `2px dashed ${csvDragOver ? 'rgba(99,102,241,0.8)' : csvFileName ? 'rgba(16,185,129,0.6)' : 'rgba(148,163,184,0.3)'}`,
-                                        borderRadius: '14px', padding: '36px 24px', textAlign: 'center',
-                                        cursor: 'pointer', transition: 'all 0.2s', userSelect: 'none',
-                                        background: csvDragOver ? 'rgba(99,102,241,0.07)' : csvFileName ? 'rgba(16,185,129,0.05)' : 'rgba(255,255,255,0.02)'
-                                    }}>
-                                    <input ref={fileInputRef} type="file" accept=".csv,.xlsx,.xls"
-                                        style={{ display: 'none' }} onChange={(e) => processFile(e.target.files[0])} />
-                                    {csvFileName ? (
+                                {/* Step 1: Download Template */}
+                                <div className={styles.card}>
+                                    <div className={styles.cardHeader}>
+                                        <div className={styles.stepBadge}>1</div>
                                         <div>
-                                            <FileSpreadsheet size={36} style={{ color: '#6ee7b7', margin: '0 auto 10px' }} />
-                                            <p style={{ margin: 0, fontWeight: 600, color: '#e2e8f0' }}>{csvFileName}</p>
-                                            <p style={{ margin: '4px 0 0', fontSize: '0.78rem', color: '#64748b' }}>Click or drop to replace</p>
+                                            <h3 className={styles.cardTitle}>Download the Template</h3>
+                                            <p className={styles.cardSub}>Fill Column D with your data. Do not rename Column A keys.</p>
                                         </div>
-                                    ) : (
+                                    </div>
+                                    <div className={styles.templateBtns}>
+                                        <button onClick={() => downloadTemplate('xlsx')} className={styles.dlBtnXlsx}>
+                                            <FileSpreadsheet size={16} /> Download Excel Template (.xlsx)
+                                        </button>
+                                        <button onClick={() => downloadTemplate('csv')} className={styles.dlBtnCsv}>
+                                            <Download size={16} /> Download CSV Template
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Step 2: Upload & Preview */}
+                                <div className={styles.card}>
+                                    <div className={styles.cardHeader}>
+                                        <div className={styles.stepBadge}>2</div>
                                         <div>
-                                            <Upload size={36} style={{ color: '#64748b', margin: '0 auto 10px' }} />
-                                            <p style={{ margin: 0, fontWeight: 600, color: '#94a3b8' }}>Drag &amp; drop your filled file here</p>
-                                            <p style={{ margin: '4px 0 0', fontSize: '0.78rem', color: '#475569' }}>or click to browse &nbsp;·&nbsp; .csv &nbsp;·&nbsp; .xlsx &nbsp;·&nbsp; .xls</p>
+                                            <h3 className={styles.cardTitle}>Upload Your Filled File</h3>
+                                            <p className={styles.cardSub}>Upload your completed spreadsheet for automated validation.</p>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        className={`${styles.dropzone} ${csvDragOver ? styles.dropzoneActive : ''} ${csvFileName ? styles.dropzoneFilled : ''}`}
+                                        onDragOver={(e) => { e.preventDefault(); setCsvDragOver(true); }}
+                                        onDragLeave={() => setCsvDragOver(false)}
+                                        onDrop={(e) => { e.preventDefault(); setCsvDragOver(false); processFile(e.dataTransfer.files[0]); }}
+                                        onClick={() => fileInputRef.current?.click()}
+                                    >
+                                        <input ref={fileInputRef} type="file" accept=".csv,.xlsx,.xls" style={{ display: 'none' }} onChange={(e) => processFile(e.target.files[0])} />
+                                        <div className={styles.dropzoneContent}>
+                                            {csvFileName ? (
+                                                <>
+                                                    <FileSpreadsheet size={48} className={styles.fileIcon} />
+                                                    <p className={styles.fileName}>{csvFileName}</p>
+                                                    <p className={styles.fileReplaceHint}>Click or drag to replace file</p>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Upload size={48} className={styles.dropzoneIcon} />
+                                                    <p className={styles.dropzoneText}>Drag & drop your filled file here</p>
+                                                    <p className={styles.dropzoneOr}>or <span>browse files</span></p>
+                                                    <p className={styles.dropzoneFormats}>CSV, XLSX or XLS</p>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* CSV Parsing Errors */}
+                                    {csvParseError && (
+                                        <div className={styles.validationBox}>
+                                            <div className={styles.validationTitle}><AlertCircle size={18} /> Error Parsing File</div>
+                                            <ul className={styles.validationList}><li>{csvParseError}</li></ul>
+                                        </div>
+                                    )}
+
+                                    {/* CSV Validation Errors */}
+                                    {csvValidationErrors.length > 0 && (
+                                        <div className={styles.validationBox}>
+                                            <div className={styles.validationTitle}><AlertCircle size={18} /> {csvValidationErrors.length} Validation Errors</div>
+                                            <p style={{ margin: '8px 0 0', fontSize: '0.8rem', color: '#64748b' }}>Please fix the following missing or invalid fields in your template:</p>
+                                            <ul className={styles.validationList}>
+                                                {csvValidationErrors.map((err, i) => <li key={i}>{err}</li>)}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Ready to Preview Action */}
+                                    {csvParsedRow && !csvPreviewOpen && (
+                                        <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+                                            <button onClick={() => setCsvPreviewOpen(true)} className={styles.submitBtnPremium}>
+                                                <Eye size={18} /> Preview & Submit ESG Report
+                                            </button>
                                         </div>
                                     )}
                                 </div>
 
-                                {csvParseError && (
-                                    <div style={{
-                                        display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px', padding: '10px 14px',
-                                        borderRadius: '9px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.35)', color: '#fca5a5', fontSize: '0.85rem'
-                                    }}>
-                                        <AlertCircle size={15} /> {csvParseError}
-                                    </div>
-                                )}
-                                {csvValidationErrors.length > 0 && (
-                                    <div style={{
-                                        marginTop: '12px', padding: '12px 16px', borderRadius: '9px',
-                                        background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)'
-                                    }}>
-                                        <p style={{ margin: '0 0 8px', fontWeight: 600, color: '#fca5a5', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                            <AlertCircle size={14} /> {csvValidationErrors.length} missing field{csvValidationErrors.length > 1 ? 's' : ''}:
-                                        </p>
-                                        <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '0.78rem', color: '#f87171', lineHeight: 1.9 }}>
-                                            {csvValidationErrors.map((e, index) => <li key={index}>{e}</li>)}
-                                        </ul>
-                                    </div>
-                                )}
-                                {csvParsedRow && !csvPreviewOpen && (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '14px', flexWrap: 'wrap' }}>
-                                        <div style={{
-                                            flex: 1, display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px',
-                                            borderRadius: '9px', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.35)', color: '#6ee7b7', fontSize: '0.85rem'
-                                        }}>
-                                            <CheckCircle2 size={15} /> File parsed — {Object.keys(ALL_FIELDS).length} fields ready.
-                                        </div>
-                                        <button onClick={() => setCsvPreviewOpen(true)} style={{
-                                            display: 'inline-flex', alignItems: 'center', gap: '7px', padding: '10px 18px',
-                                            borderRadius: '9px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem',
-                                            background: 'linear-gradient(135deg,rgba(99,102,241,0.25),rgba(99,102,241,0.1))',
-                                            border: '1px solid rgba(99,102,241,0.5)', color: '#a5b4fc'
-                                        }}><Eye size={14} /> Preview &amp; Submit</button>
-                                    </div>
-                                )}
-                            </div>
+                                {/* Step 3: Global Preview Modal (Styled) */}
+                                <AnimatePresence>
+                                    {csvPreviewOpen && csvParsedRow && (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className={styles.previewOverlay}
+                                        >
+                                            <motion.div
+                                                initial={{ scale: 0.95, y: 20 }}
+                                                animate={{ scale: 1, y: 0 }}
+                                                exit={{ scale: 0.95, y: 20 }}
+                                                className={styles.previewCard}
+                                            >
+                                                <button onClick={() => setCsvPreviewOpen(false)} className={styles.previewCloseBtn}><X size={20} /></button>
 
-                            {/* ── Step 3: Preview & Submit ── */}
-                            <AnimatePresence>
-                                {csvParsedRow && csvPreviewOpen && (
-                                    <motion.div key="csv-preview" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                                        className={styles.formContainer}>
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                <div style={{
-                                                    width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg,#fbbf24,#f59e0b)',
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.8rem', color: '#fff'
-                                                }}>3</div>
-                                                <p style={{ margin: 0, fontWeight: 700, fontSize: '0.97rem', color: '#e2e8f0' }}>Review &amp; Submit</p>
-                                            </div>
-                                            <button onClick={() => setCsvPreviewOpen(false)} style={{
-                                                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-                                                borderRadius: '7px', padding: '5px 8px', cursor: 'pointer', color: '#94a3b8'
-                                            }}><X size={15} /></button>
-                                        </div>
-
-                                        {/* ENV preview */}
-                                        {[{ title: '🌿 Environment', fields: ENV_FIELDS, color: '#6ee7b7' },
-                                        { title: '👥 Social', fields: SOC_FIELDS, color: '#93c5fd' },
-                                        { title: '🏛️ Governance', fields: GOV_FIELDS, color: '#c4b5fd' }
-                                        ].map(({ title, fields, color }) => (
-                                            <div key={title} style={{ marginBottom: '16px' }}>
-                                                <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '0.83rem', color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{title}</p>
-                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: '6px' }}>
-                                                    {Object.entries(fields).map(([key, { label }]) => (
-                                                        <div key={key} style={{
-                                                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                                                            padding: '6px 10px', borderRadius: '7px', background: 'rgba(255,255,255,0.04)',
-                                                            border: '1px solid rgba(255,255,255,0.07)', gap: '8px'
-                                                        }}>
-                                                            <span style={{ fontSize: '0.76rem', color: '#94a3b8', flexShrink: 0 }}>{label}</span>
-                                                            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#e2e8f0', textAlign: 'right' }}>
-                                                                {csvParsedRow?.[key]?.toString() ?? '—'}
-                                                            </span>
-                                                        </div>
-                                                    ))}
+                                                <div className={styles.previewHeader}>
+                                                    <h2 className={styles.previewTitle}>Review Submission</h2>
+                                                    <p className={styles.previewSub}>Verify the parsed data before finalizing your ESG report.</p>
                                                 </div>
-                                            </div>
-                                        ))}
 
-                                        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '20px', flexWrap: 'wrap' }}>
-                                            <button onClick={resetCsv} className={styles.prevBtn} disabled={csvLoading}>
-                                                <X size={14} /> Cancel
-                                            </button>
-                                            <button onClick={handleCsvSubmit} className={styles.submitAllBtn} disabled={csvLoading}>
-                                                {csvLoading
-                                                    ? <><Loader2 size={16} className="animate-spin" /> Submitting…</>
-                                                    : <><CheckCircle2 size={16} /> Submit ESG Report</>}
-                                            </button>
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+                                                {/* Environment Section */}
+                                                <div className={styles.previewSection}>
+                                                    <div className={`${styles.previewSectionHeader} ${styles.previewSectionEnv}`}>🌿 Environment</div>
+                                                    <div className={styles.previewGrid}>
+                                                        {Object.entries(ENV_FIELDS).map(([key, { label }]) => (
+                                                            <div key={key} className={styles.previewItem}>
+                                                                <span className={styles.previewLabel}>{label}</span>
+                                                                <span className={styles.previewValue}>{csvParsedRow[key] ?? '—'}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
 
-                        </>)}
+                                                {/* Social Section */}
+                                                <div className={styles.previewSection}>
+                                                    <div className={`${styles.previewSectionHeader} ${styles.previewSectionSoc}`}>👥 Social</div>
+                                                    <div className={styles.previewGrid}>
+                                                        {Object.entries(SOC_FIELDS).map(([key, { label }]) => (
+                                                            <div key={key} className={styles.previewItem}>
+                                                                <span className={styles.previewLabel}>{label}</span>
+                                                                <span className={styles.previewValue}>{csvParsedRow[key] ?? '—'}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                {/* Governance Section */}
+                                                <div className={styles.previewSection}>
+                                                    <div className={`${styles.previewSectionHeader} ${styles.previewSectionGov}`}>🏛️ Governance</div>
+                                                    <div className={styles.previewGrid}>
+                                                        {Object.entries(GOV_FIELDS).map(([key, { label }]) => (
+                                                            <div key={key} className={styles.previewItem}>
+                                                                <span className={styles.previewLabel}>{label}</span>
+                                                                <span className={styles.previewValue}>{csvParsedRow[key] === true ? 'Yes' : csvParsedRow[key] === false ? 'No' : csvParsedRow[key] ?? '—'}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                <div className={styles.submitRow}>
+                                                    <button onClick={resetCsv} className={styles.cancelBtn} disabled={csvLoading}>Cancel</button>
+                                                    <button onClick={handleCsvSubmit} disabled={csvLoading} className={styles.submitBtnPremium}>
+                                                        {csvLoading ? <Loader2 className="animate-spin" /> : <CheckCircle2 size={18} />}
+                                                        {csvLoading ? 'Submitting...' : 'Finalize & Submit'}
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </>
+                        )}
                     </motion.div>
                 )}
+
 
             </div>
         </section>
