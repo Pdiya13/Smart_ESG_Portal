@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -16,19 +16,24 @@ const DashboardPage = () => {
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [showDetailedMetrics, setShowDetailedMetrics] = useState(false);
     const [expandedCard, setExpandedCard] = useState(null);
+    const scrollRef = useRef(null);
 
-    // Generate a wider range of years (current year and past 4 years = last 5 years)
+
     const currentYear = new Date().getFullYear();
-    const defaultYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
-    const [availableYears, setAvailableYears] = useState(defaultYears);
+    const [availableYears, setAvailableYears] = useState([]);
 
     // Update available years when history is loaded
     useEffect(() => {
         const historyYears = data?.history ? data.history.map(h => h.reportingYear) : [];
-        // Combine default years (last 5) with database history and the currently selected year
-        const uniqueYears = Array.from(new Set([...defaultYears, ...historyYears, selectedYear])).sort((a, b) => b - a);
+        const uniqueYears = Array.from(new Set(historyYears)).sort((a, b) => b - a);
         setAvailableYears(uniqueYears);
+
+        // If selected year has no data, but history is available, auto-switch to the latest year with data
+        if (data && !data.score && uniqueYears.length > 0 && !uniqueYears.includes(selectedYear)) {
+            setSelectedYear(uniqueYears[0]);
+        }
     }, [data, selectedYear]);
+
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -40,13 +45,7 @@ const DashboardPage = () => {
                 const dashboardData = response.data.data;
                 setData(dashboardData);
                 
-                // If the selected year has no data, but history is available, 
-                // extracted the years from history to populate the selector.
-                if (dashboardData?.history) {
-                    const historyYears = dashboardData.history.map(h => h.reportingYear);
-                    const uniqueYears = Array.from(new Set([...historyYears, selectedYear])).sort((a, b) => b - a);
-                    setAvailableYears(uniqueYears);
-                }
+                // History is extracted to populate the selector in the specialized useEffect
             } catch (err) {
                 console.error("Failed to fetch dashboard data:", err);
                 setError(err.response?.data?.message || `Failed to load dashboard data for ${selectedYear}.`);
@@ -65,6 +64,26 @@ const DashboardPage = () => {
     // The history list was added to the backend to sync raw DB data to the chart
     const chartData = data?.history || [];
     const metrics = data?.metrics || {};
+    
+    // Auto-scroll to most recent data when chart content changes
+    useEffect(() => {
+        if (scrollRef.current && chartData.length > 5) {
+            // Use requestAnimationFrame to ensure the DOM has updated
+            requestAnimationFrame(() => {
+                if (scrollRef.current) {
+                    scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+                }
+            });
+        }
+    }, [chartData]);
+
+    // Calculate dynamic chart width to show 5 years at a time
+    const dynamicChartWidth = useMemo(() => {
+        if (chartData.length <= 5) return '100%';
+        // Ensure each year gets at least 20% of the visible container (5 years visible)
+        return `${(chartData.length / 5) * 100}%`;
+    }, [chartData.length]);
+
 
     const formatMetricName = (key) => {
         return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
@@ -230,34 +249,64 @@ const DashboardPage = () => {
                                     </span>
                                 )}
                             </div>
-                            <div className={styles.chartContainer} style={{ width: '100%', height: '300px' }}>
-                                {chartData.length > 0 ? (
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                                            <defs>
-                                                <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.8} />
-                                                    <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
-                                                </linearGradient>
-                                            </defs>
-                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                                            {/* We map database entity field reportingYear and totalEsgScore */}
-                                            <XAxis dataKey="reportingYear" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                                            <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} domain={['auto', 'auto']} />
-                                            <Tooltip
-                                                contentStyle={{ backgroundColor: 'rgba(255,255,255,0.9)', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#1e293b', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-                                                itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
-                                                formatter={(value) => [value.toFixed(2), "ESG Score"]}
-                                                labelFormatter={(label) => `Year: ${label}`}
-                                            />
-                                            <Area type="monotone" dataKey="totalEsgScore" stroke="var(--color-primary)" strokeWidth={4} fillOpacity={1} fill="url(#colorScore)" />
-                                        </AreaChart>
-                                    </ResponsiveContainer>
-                                ) : (
-                                    <div className="h-full flex items-center justify-center text-muted-foreground">
-                                        Not enough historical data synced from database to generate trends.
+                            <div className={styles.chartLayout}>
+                                {/* Fixed Y-Axis Column */}
+                                <div className={styles.yAxisFixed}>
+                                    {chartData.length > 0 && (
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <AreaChart data={chartData} margin={{ top: 10, right: 0, left: 10, bottom: 40 }}>
+                                                <YAxis 
+                                                    domain={[0, 100]} 
+                                                    stroke="#64748b" 
+                                                    fontSize={11} 
+                                                    tickLine={false} 
+                                                    axisLine={false}
+                                                    tickCount={6}
+                                                />
+                                                <Area dataKey="totalEsgScore" stroke="transparent" fill="transparent" />
+                                            </AreaChart>
+                                        </ResponsiveContainer>
+                                    )}
+                                </div>
+
+                                {/* Scrollable Data Column */}
+                                <div className={styles.chartScrollArea} ref={scrollRef}>
+                                    <div style={{ width: dynamicChartWidth, height: '100%', minWidth: '100%' }}>
+                                        {chartData.length > 0 ? (
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 40 }}>
+                                                    <defs>
+                                                        <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
+                                                            <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.8} />
+                                                            <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                                                    <XAxis 
+                                                        dataKey="reportingYear" 
+                                                        stroke="#64748b" 
+                                                        fontSize={12} 
+                                                        tickLine={false} 
+                                                        axisLine={false} 
+                                                        padding={{ left: 20, right: 20 }}
+                                                    />
+                                                    <YAxis domain={[0, 100]} width={0} tick={false} axisLine={false} tickCount={6} />
+                                                    <Tooltip
+                                                        contentStyle={{ backgroundColor: 'rgba(255,255,255,0.9)', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#1e293b', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                                                        itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
+                                                        formatter={(value) => [value.toFixed(2), "ESG Score"]}
+                                                        labelFormatter={(label) => `Year: ${label}`}
+                                                    />
+                                                    <Area type="monotone" dataKey="totalEsgScore" stroke="var(--color-primary)" strokeWidth={4} fillOpacity={1} fill="url(#colorScore)" />
+                                                </AreaChart>
+                                            </ResponsiveContainer>
+                                        ) : (
+                                            <div className="h-full flex items-center justify-center text-muted-foreground">
+                                                Not enough historical data synced from database to generate trends.
+                                            </div>
+                                        )}
                                     </div>
-                                )}
+                                </div>
                             </div>
                         </motion.div>
 
@@ -271,7 +320,7 @@ const DashboardPage = () => {
                             <h3 className={styles.yearSelectorTitle}><Calendar size={20} className="text-primary" /> Select Year to View Data</h3>
                             <div className={styles.yearSelectorContainer}>
                                 <div className={styles.yearChips}>
-                                    {availableYears.filter(y => y >= currentYear - 4).map(year => (
+                                    {availableYears.slice(0, 5).map(year => (
                                         <button
                                             key={year}
                                             onClick={() => setSelectedYear(year)}
@@ -281,29 +330,21 @@ const DashboardPage = () => {
                                         </button>
                                     ))}
                                 </div>
-                                <div className={styles.moreYearsWrapper}>
-                                    <span className={styles.moreLabel}>Older Data:</span>
-                                    <select 
-                                        className={styles.yearSelect}
-                                        value={selectedYear < currentYear - 4 ? selectedYear : ''}
-                                        onChange={(e) => setSelectedYear(Number(e.target.value))}
-                                    >
-                                        <option value="" disabled>Select Year...</option>
-                                        {(() => {
-                                            const historyYears = data?.history ? data.history.map(h => h.reportingYear) : [];
-                                            const minYear = Math.min(2010, ...historyYears);
-                                            const startDropdown = currentYear - 5;
-                                            if (startDropdown < minYear) return null;
-                                            
-                                            return Array.from(
-                                                { length: startDropdown - minYear + 1 }, 
-                                                (_, i) => startDropdown - i
-                                            ).map(year => (
+                                {availableYears.length > 5 && (
+                                    <div className={styles.moreYearsWrapper}>
+                                        <span className={styles.moreLabel}>Older Data:</span>
+                                        <select 
+                                            className={styles.yearSelect}
+                                            value={availableYears.slice(5).includes(selectedYear) ? selectedYear : ''}
+                                            onChange={(e) => setSelectedYear(Number(e.target.value))}
+                                        >
+                                            <option value="" disabled>Select Year...</option>
+                                            {availableYears.slice(5).map(year => (
                                                 <option key={year} value={year}>{year}</option>
-                                            ));
-                                        })()}
-                                    </select>
-                                </div>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
                             </div>
                         </motion.div>
 
