@@ -8,6 +8,7 @@ import ESGSubmitPage from '../features/dashboard/pages/ESGSubmitPage';
 import ESGBenchmarkPage from '../features/dashboard/pages/ESGBenchmarkPage';
 import ESGUploadPage from '../features/dashboard/pages/ESGUploadPage';
 import AnalyticsPage from '../features/dashboard/pages/AnalyticsPage';
+import AdminBenchmarkPage from '../features/dashboard/pages/AdminBenchmarkPage';
 import ProfilePage from '../features/auth/pages/ProfilePage';
 import BenchmarkUploadPage from '../features/dashboard/pages/BenchmarkUploadPage';
 import ProtectedRoute from '../shared/components/routes/ProtectedRoute';
@@ -19,8 +20,8 @@ const AppRoutes = () => {
                 <Route index element={<HomePage />} />
                 <Route path="features" element={<FeaturesPage />} />
 
-                {/* Protected Routes */}
-                <Route element={<ProtectedRoute />}>
+                {/* Company/User Protected Routes */}
+                <Route element={<ProtectedRoute allowedRoles={['ROLE_USER']} />}>
                     <Route path="dashboard" element={<DashboardPage />} />
                     <Route path="submit-esg" element={<ESGSubmitPage />} />
                     <Route path="benchmarks" element={<ESGBenchmarkPage />} />
@@ -28,6 +29,13 @@ const AppRoutes = () => {
                     <Route path="upload-benchmarks" element={<BenchmarkUploadPage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
                     <Route path="profile" element={<ProfilePage />} />
+                </Route>
+
+                {/* Admin Protected Routes */}
+                <Route element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']} />}>
+                    <Route path="admin/benchmarks" element={<AdminBenchmarkPage />} />
+                    {/* Reuse profile page for admin as well */}
+                    <Route path="admin/profile" element={<ProfilePage />} />
                 </Route>
             </Route>
 

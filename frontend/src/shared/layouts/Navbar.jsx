@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
-import { Leaf, LogOut, LayoutDashboard, Target } from 'lucide-react';
+import { Leaf, LogOut, LayoutDashboard, Target, Shield } from 'lucide-react';
 import { useAuth } from '../../features/auth/context/AuthContext';
 import styles from './Navbar.module.css';
 
@@ -25,8 +25,19 @@ const Navbar = () => {
                 <div className={styles.navLinks}>
                     <Link to="/" className={styles.navLink}>Home</Link>
                     <Link to="/features" className={styles.navLink}>Features</Link>
-                    <Link to={user ? "/dashboard" : "/register"} className={styles.navLink}>ESG Rating</Link>
-                    {user && <Link to="/analytics" className={styles.navLink}>Analytics</Link>}
+                    
+                    {user?.role === 'ROLE_USER' && (
+                        <>
+                            <Link to="/dashboard" className={styles.navLink}>ESG Rating</Link>
+                            <Link to="/analytics" className={styles.navLink}>Analytics</Link>
+                        </>
+                    )}
+
+                    {user?.role === 'ROLE_ADMIN' && (
+                        <Link to="/admin/benchmarks" className={`${styles.navLink} ${styles.adminLink}`}>
+                            <Shield size={16} /> Admin Panel
+                        </Link>
+                    )}
                 </div>
 
                 <div className={styles.actions}>
