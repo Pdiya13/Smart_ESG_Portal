@@ -1,5 +1,6 @@
 package com.esg.auth.auth_service.security;
 
+import com.esg.auth.auth_service.entity.Admin;
 import com.esg.auth.auth_service.dto.*;
 import com.esg.auth.auth_service.entity.Company;
 import com.esg.auth.auth_service.repository.CompanyRepository;
@@ -26,6 +27,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
 
+
     public LoginResponesDto login(LoginRequestDto loginRequestDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -34,15 +36,32 @@ public class AuthService {
                 )
         );
 
-        Company company = (Company) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+        UserDto userDto;
+        String token;
 
-        String token = authUtil.generateToken(company);
-
-        CompanyDto companyDto = modelMapper.map(company , CompanyDto.class);
+        if (principal instanceof Company company) {
+            token = authUtil.generateToken(company);
+            userDto = UserDto.builder()
+                    .id(company.getId())
+                    .email(company.getEmail())
+                    .role("ROLE_USER")
+                    .companyName(company.getCompanyName())
+                    .build();
+        } else if (principal instanceof Admin admin) {
+            token = authUtil.generateToken(admin);
+            userDto = UserDto.builder()
+                    .id(admin.getId())
+                    .email(admin.getEmail())
+                    .role("ROLE_ADMIN")
+                    .build();
+        } else {
+            throw new RuntimeException("Unsupported user type");
+        }
 
         return LoginResponesDto.builder()
                 .jwt(token)
-                .company(companyDto)
+                .user(userDto)
                 .build();
     }
     public SignUpResponseDto signup(SignUpRequestDto signupRequestDto) {

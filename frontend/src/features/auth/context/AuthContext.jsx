@@ -12,10 +12,18 @@ const AuthContext = createContext(null);
  */
 const normalizeUser = (userData) => {
     if (!userData) return null;
+    
+    // Handle new generic 'user' field
+    if (userData.user) {
+        const { user, ...rest } = userData;
+        return { ...rest, ...user };
+    }
+
     // Already flattened (new format)
-    if (userData.companyName || userData.email) {
+    if (userData.role || userData.companyName || userData.email) {
         return userData;
     }
+
     // Old nested format - flatten it
     if (userData.company) {
         const { company, ...rest } = userData;

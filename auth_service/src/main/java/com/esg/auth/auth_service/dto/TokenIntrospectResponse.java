@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TokenIntrospectResponse {
-
     private boolean valid;
-    private String companyId;
+    private String userId;
+    private String role;
 }

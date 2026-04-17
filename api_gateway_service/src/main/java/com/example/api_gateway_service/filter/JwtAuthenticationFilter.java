@@ -48,7 +48,8 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         return authServiceClient.validateToken(token)
                 .doOnNext(response -> {
                     System.out.println("Introspect valid: " + response.isValid());
-                    System.out.println("CompanyId: " + response.getCompanyId());
+                    System.out.println("UserId: " + response.getUserId());
+                    System.out.println("Role: " + response.getRole());
                 })
                 .flatMap(response -> {
 
@@ -61,7 +62,8 @@ public class JwtAuthenticationFilter implements GlobalFilter {
                             exchange.mutate()
                                     .request(exchange.getRequest()
                                             .mutate()
-                                            .header("X-Company-Id", response.getCompanyId())
+                                            .header("X-Company-Id", response.getUserId())
+                                            .header("X-User-Role", response.getRole())
                                             .build())
                                     .build()
                     );

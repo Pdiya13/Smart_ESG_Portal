@@ -35,7 +35,7 @@ public class AuthController {
     public ResponseEntity<CompanyDto> upadteCompany(@RequestHeader("Authorization") String authHeader,
                                                     @Valid @RequestBody UpdateCompanyRequestDto updateCompanyRequestDto) {
         String token = authHeader.replace("Bearer ", "");
-        UUID id = authUtil.extractCompanyId(token);
+        UUID id = authUtil.extractUserId(token);
 
         return ResponseEntity.ok(authService.update(id, updateCompanyRequestDto));
 
@@ -45,9 +45,9 @@ public class AuthController {
     public ResponseEntity<String> deleteCompany(@RequestHeader("Authorization") String authHeader)
     {
         String token = authHeader.substring(7);
-        UUID companyId = authUtil.extractCompanyId(token);
+        UUID userId = authUtil.extractUserId(token);
 
-        return ResponseEntity.ok(authService.deleteCompany(companyId));
+        return ResponseEntity.ok(authService.deleteCompany(userId));
 
     }
 
@@ -57,22 +57,23 @@ public class AuthController {
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.ok(
-                    new TokenIntrospectResponse(false, null)
+                    new TokenIntrospectResponse(false, null, null)
             );
         }
 
         String token = authHeader.substring(7);
 
         try {
-            UUID companyId = authUtil.extractCompanyId(token);
+            UUID userId = authUtil.extractUserId(token);
+            String role = authUtil.extractRole(token);
 
             return ResponseEntity.ok(
-                    new TokenIntrospectResponse(true, companyId.toString())
+                    new TokenIntrospectResponse(true, userId.toString(), role)
             );
 
         } catch (Exception e) {
             return ResponseEntity.ok(
-                    new TokenIntrospectResponse(false, null)
+                    new TokenIntrospectResponse(false, null, null)
             );
         }
     }
