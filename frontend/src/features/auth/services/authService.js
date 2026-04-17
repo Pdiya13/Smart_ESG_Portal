@@ -5,10 +5,10 @@ const API_URL = 'http://localhost:8080/auth';
 
 const login = async (data) => {
     const response = await axios.post(`${API_URL}/login`, data);
-    const { jwt, company } = response.data;
+    const { jwt, user } = response.data;
     if (jwt) {
-        // Flatten: store token + all company fields together in one object
-        const userToStore = { jwt, ...company };
+        // Flatten: store token + all user fields together in one object
+        const userToStore = { jwt, ...user };
         localStorage.setItem('user', JSON.stringify(userToStore));
         return userToStore;
     }

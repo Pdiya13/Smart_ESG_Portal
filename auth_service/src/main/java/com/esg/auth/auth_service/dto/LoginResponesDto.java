@@ -10,5 +10,5 @@ import java.util.UUID;
 @Builder
 public class LoginResponesDto {
     private String jwt;
-    private CompanyDto company;
+    private UserDto user;
 }

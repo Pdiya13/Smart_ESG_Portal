@@ -3,7 +3,6 @@ package com.esg.core_service.service;
 import com.esg.core_service.dto.SocialBenchmarkRequestDto;
 import com.esg.core_service.entity.SocialBenchmark;
 import com.esg.core_service.repository.SocialBenchmarkRepository;
-import com.esg.core_service.util.SocialBenchmarkRules;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -17,15 +16,16 @@ import java.util.UUID;
 public class SocialBenchmarkService {
 
     private final SocialBenchmarkRepository repository;
+    private final BenchmarkStandardService standardService;
     private final ModelMapper mapper;
 
     public void save(UUID companyId, SocialBenchmarkRequestDto dto) {
 
-        SocialBenchmarkRules.validate(dto.getKpiName(), dto.getBenchmarkValue());
+        standardService.validate(dto.getKpiName(), dto.getBenchmarkValue());
 
         SocialBenchmark b = mapper.map(dto, SocialBenchmark.class);
         b.setCompanyId(companyId);
-        b.setComparisonType(SocialBenchmarkRules.getComparison(dto.getKpiName()));
+        b.setComparisonType(standardService.getComparisonType(dto.getKpiName()));
         b.setCreatedAt(LocalDateTime.now());
 
         repository.save(b);

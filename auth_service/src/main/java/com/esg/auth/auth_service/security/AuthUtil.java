@@ -1,10 +1,12 @@
 package com.esg.auth.auth_service.security;
 
 import com.esg.auth.auth_service.entity.Company;
+import com.esg.auth.auth_service.entity.Admin;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -28,25 +30,45 @@ public class AuthUtil {
 
 
 
-    public String generateToken(Company company)
-    {
+    public String generateToken(UserDetails user) {
+        String userId = "";
+        String role = "";
+
+        if (user instanceof Company company) {
+            userId = company.getId().toString();
+            role = "ROLE_USER";
+        } else if (user instanceof Admin admin) {
+            userId = admin.getId().toString();
+            role = "ROLE_ADMIN";
+        }
+
         return Jwts.builder()
-                .subject(company.getEmail())
-                .claim("companyId" , company.getId().toString())
+                .subject(user.getUsername())
+                .claim("userId", userId)
+                .claim("role", role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getSecretkey())
                 .compact();
     }
 
-    public UUID extractCompanyId(String token) {
-        String companyId = Jwts.parser()
+    public UUID extractUserId(String token) {
+        String userId = Jwts.parser()
                 .verifyWith(getSecretkey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .get("companyId", String.class);
+                .get("userId", String.class);
 
-        return UUID.fromString(companyId);
+        return UUID.fromString(userId);
+    }
+
+    public String extractRole(String token) {
+        return Jwts.parser()
+                .verifyWith(getSecretkey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("role", String.class);
     }
 }
