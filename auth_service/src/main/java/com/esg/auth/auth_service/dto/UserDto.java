@@ -13,4 +13,5 @@ public class UserDto {
     private String email;
     private String role;
     private String companyName; // Optional, only for companies
+    private Boolean active; // true for admins, actual value for companies
 }

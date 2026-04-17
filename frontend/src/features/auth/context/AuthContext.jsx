@@ -70,13 +70,24 @@ export const AuthProvider = ({ children }) => {
         return normalized;
     };
 
+    const checkStatus = async () => {
+        const active = await authService.checkAccountStatus();
+        if (active !== null && user) {
+            const updatedUser = { ...user, active };
+            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            return active;
+        }
+        return user?.active ?? true;
+    };
+
     const logout = () => {
         authService.logout();
         setUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, signup, logout, updateUser, loading }}>
+        <AuthContext.Provider value={{ user, login, signup, logout, updateUser, checkStatus, loading }}>
             {!loading && children}
         </AuthContext.Provider>
     );

@@ -15,7 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +49,7 @@ public class AuthService {
                     .email(company.getEmail())
                     .role("ROLE_USER")
                     .companyName(company.getCompanyName())
+                    .active(company.isActive())
                     .build();
         } else if (principal instanceof Admin admin) {
             token = authUtil.generateToken(admin);
@@ -54,6 +57,7 @@ public class AuthService {
                     .id(admin.getId())
                     .email(admin.getEmail())
                     .role("ROLE_ADMIN")
+                    .active(true)
                     .build();
         } else {
             throw new RuntimeException("Unsupported user type");
@@ -115,4 +119,29 @@ public class AuthService {
 
         return "Company account deleted successfully";
     }
+
+    // ---- Admin: Company Management ----
+
+    public List<CompanyDto> getAllCompanies() {
+        return companyRepository.findAll().stream()
+                .map(company -> modelMapper.map(company, CompanyDto.class))
+                .collect(Collectors.toList());
+    }
+
+    public CompanyDto toggleCompanyStatus(UUID companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+
+        company.setActive(!company.isActive());
+        Company saved = companyRepository.save(company);
+
+        return modelMapper.map(saved, CompanyDto.class);
+    }
+
+    public boolean getCompanyActiveStatus(UUID companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+        return company.isActive();
+    }
 }
+

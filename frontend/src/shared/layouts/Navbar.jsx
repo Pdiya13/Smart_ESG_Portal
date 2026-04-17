@@ -34,9 +34,14 @@ const Navbar = () => {
                     )}
 
                     {user?.role === 'ROLE_ADMIN' && (
-                        <Link to="/admin/benchmarks" className={`${styles.navLink} ${styles.adminLink}`}>
-                            <Shield size={16} /> Admin Panel
-                        </Link>
+                        <>
+                            <Link to="/admin/dashboard" className={`${styles.navLink} ${styles.adminLink}`}>
+                                <Shield size={16} /> Dashboard
+                            </Link>
+                            <Link to="/admin/benchmarks" className={styles.navLink}>
+                                Benchmarks
+                            </Link>
+                        </>
                     )}
                 </div>
 

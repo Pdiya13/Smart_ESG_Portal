@@ -50,12 +50,27 @@ const updateCompany = async (data) => {
     return updatedUser;
 };
 
+const checkAccountStatus = async () => {
+    const user = getCurrentUser();
+    if (!user?.jwt) return null;
+
+    try {
+        const response = await axios.get(`${API_URL}/status`, {
+            headers: { Authorization: `Bearer ${user.jwt}` }
+        });
+        return response.data.active;
+    } catch (e) {
+        return null; // On error, don't block
+    }
+};
+
 const authService = {
     login,
     signup,
     logout,
     getCurrentUser,
-    updateCompany
+    updateCompany,
+    checkAccountStatus
 };
 
 export default authService;

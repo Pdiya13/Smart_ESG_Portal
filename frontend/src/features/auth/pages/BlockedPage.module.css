@@ -1,0 +1,84 @@
+.blockedPage {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background-color: var(--color-background);
+}
+
+.card {
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+    padding: 48px 40px;
+    background: white;
+    border: 1px solid #fee2e2;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.iconWrapper {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: #fef2f2;
+    border: 2px solid #fecaca;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 28px;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #dc2626;
+    margin-bottom: 12px;
+    letter-spacing: -0.3px;
+}
+
+.message {
+    color: #4b5563;
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 8px;
+}
+
+.message strong {
+    color: #dc2626;
+}
+
+.subtext {
+    color: #9ca3af;
+    font-size: 0.85rem;
+    margin-top: 20px;
+    margin-bottom: 28px;
+}
+
+.logoutBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: #111827;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.logoutBtn:hover {
+    background: #1f2937;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}

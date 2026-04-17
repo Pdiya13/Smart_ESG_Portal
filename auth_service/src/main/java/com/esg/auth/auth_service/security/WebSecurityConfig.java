@@ -26,7 +26,8 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 "/auth/login",
                                 "/auth/signup",
-                                "/auth/token/introspect"
+                                "/auth/token/introspect",
+                                "/auth/admin/**"
                         ).permitAll()
                         .anyRequest().permitAll()
                 );
