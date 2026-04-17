@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../features/auth/context/AuthContext';
 
-const ProtectedRoute = () => {
+const ProtectedRoute = ({ allowedRoles }) => {
     const { user, loading } = useAuth();
     const location = useLocation();
 
@@ -11,11 +11,13 @@ const ProtectedRoute = () => {
     }
 
     if (!user) {
-        // Redirect them to the login page, but save the current location they were
-        // trying to go to when they were redirected. This allows us to send them
-        // along to that page after they login, which is a nicer user experience
-        // than dropping them off on the home page.
         return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    // Check for role-based access
+    if (allowedRoles && !allowedRoles.includes(user.role)) {
+        // If they are an admin but trying to access user page, or user trying to access admin page
+        return <Navigate to="/dashboard" replace />;
     }
 
     return <Outlet />;
