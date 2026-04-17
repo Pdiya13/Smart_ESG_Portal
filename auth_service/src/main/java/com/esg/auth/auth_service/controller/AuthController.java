@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -77,4 +78,36 @@ public class AuthController {
             );
         }
     }
+
+    // ---- Admin: Company Management Endpoints ----
+
+    @GetMapping("/admin/companies")
+    public ResponseEntity<List<CompanyDto>> getAllCompanies() {
+        return ResponseEntity.ok(authService.getAllCompanies());
+    }
+
+    @PutMapping("/admin/companies/{id}/toggle")
+    public ResponseEntity<CompanyDto> toggleCompanyStatus(@PathVariable UUID id) {
+        return ResponseEntity.ok(authService.toggleCompanyStatus(id));
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<?> getAccountStatus(@RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            UUID userId = authUtil.extractUserId(token);
+            String role = authUtil.extractRole(token);
+
+            // Admins are always active
+            if ("ROLE_ADMIN".equals(role)) {
+                return ResponseEntity.ok(java.util.Map.of("active", true));
+            }
+
+            boolean active = authService.getCompanyActiveStatus(userId);
+            return ResponseEntity.ok(java.util.Map.of("active", active));
+        } catch (Exception e) {
+            return ResponseEntity.ok(java.util.Map.of("active", true));
+        }
+    }
 }
+

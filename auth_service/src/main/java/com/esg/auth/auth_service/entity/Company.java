@@ -48,6 +48,10 @@ public class Company implements UserDetails {
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean active = true;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = Instant.now();
@@ -61,5 +65,10 @@ public class Company implements UserDetails {
     @Override
     public String getUsername() {
         return this.email;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // Always allow login; active status is checked by frontend after login
     }
 }

@@ -31,8 +31,15 @@ const AuthPage = () => {
     const handleLogin = async (data) => {
         setIsLoading(true);
         try {
-            await login(data);
-            navigate('/dashboard');
+            const user = await login(data);
+            // Redirect based on role and active status
+            if (user?.role === 'ROLE_ADMIN') {
+                navigate('/admin/dashboard');
+            } else if (user?.active === false) {
+                navigate('/blocked');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (error) {
             console.error("Login failed", error);
             alert("Login failed! Please check your credentials.");

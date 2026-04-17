@@ -1,37 +1,51 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/core/api/admin/benchmarks';
+const BENCHMARK_API_URL = 'http://localhost:8080/core/api/admin/benchmarks';
+const COMPANY_API_URL = 'http://localhost:8080/auth/admin/companies';
 
-const getAllBenchmarkStandards = async () => {
+const getAuthHeaders = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const token = user?.jwt;
+    return {
+        'Authorization': `Bearer ${token}`,
+        'X-User-Role': user?.role
+    };
+};
 
-    const response = await axios.get(API_URL, {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'X-User-Role': user?.role // Forwarded for convenience, though gateway should handle it
-        }
+const getAllBenchmarkStandards = async () => {
+    const response = await axios.get(BENCHMARK_API_URL, {
+        headers: getAuthHeaders()
     });
     return response.data;
 };
 
 const updateBenchmarkStandard = async (kpiName, newValue) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const token = user?.jwt;
+    const response = await axios.put(`${BENCHMARK_API_URL}/${kpiName}?newValue=${newValue}`, {}, {
+        headers: getAuthHeaders()
+    });
+    return response.data;
+};
 
-    // The backend endpoint is PUT /{kpiName}?newValue=...
-    const response = await axios.put(`${API_URL}/${kpiName}?newValue=${newValue}`, {}, {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'X-User-Role': user?.role
-        }
+const getAllCompanies = async () => {
+    const response = await axios.get(COMPANY_API_URL, {
+        headers: getAuthHeaders()
+    });
+    return response.data;
+};
+
+const toggleCompanyStatus = async (companyId) => {
+    const response = await axios.put(`${COMPANY_API_URL}/${companyId}/toggle`, {}, {
+        headers: getAuthHeaders()
     });
     return response.data;
 };
 
 const adminService = {
     getAllBenchmarkStandards,
-    updateBenchmarkStandard
+    updateBenchmarkStandard,
+    getAllCompanies,
+    toggleCompanyStatus
 };
 
 export default adminService;
+
