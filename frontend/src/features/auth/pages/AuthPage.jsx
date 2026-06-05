@@ -5,6 +5,7 @@ import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import authService from '../services/authService';
 import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { toast } from 'react-hot-toast';
 import styles from './AuthPage.module.css';
 
 const AuthPage = () => {
@@ -32,6 +33,7 @@ const AuthPage = () => {
         setIsLoading(true);
         try {
             const user = await login(data);
+            toast.success("Successfully logged in!");
             // Redirect based on role and active status
             if (user?.role === 'ROLE_ADMIN') {
                 navigate('/admin/dashboard');
@@ -42,7 +44,7 @@ const AuthPage = () => {
             }
         } catch (error) {
             console.error("Login failed", error);
-            alert("Login failed! Please check your credentials.");
+            toast.error("Login failed! Please check your credentials.");
         } finally {
             setIsLoading(false);
         }
@@ -52,10 +54,11 @@ const AuthPage = () => {
         setIsLoading(true);
         try {
             await signup(data);
+            toast.success("Registration successful! Welcome to ESG Portal.");
             navigate('/dashboard');
         } catch (error) {
             console.error("Registration failed", error);
-            alert("Registration failed! Please try again.");
+            toast.error("Registration failed! Please try again.");
         } finally {
             setIsLoading(false);
         }

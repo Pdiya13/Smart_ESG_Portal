@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as XLSX from 'xlsx';
 import { Leaf, Users, Shield, CheckCircle2, AlertCircle, Loader2, ArrowRight, ArrowLeft, Play, Award, Upload, Download, FileSpreadsheet, Eye, X, Info } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import api from '../../../utils/api';
 import styles from './ESGSubmitPage.module.css';
 
@@ -143,7 +144,9 @@ const ESGSubmitPage = () => {
         if (!file) return;
         const ext = file.name.split('.').pop().toLowerCase();
         if (!['csv', 'xlsx', 'xls'].includes(ext)) {
-            setCsvParseError('Unsupported file type. Please upload .csv, .xlsx, or .xls.');
+            const errorMsg = 'Unsupported file type. Please upload .csv, .xlsx, or .xls.';
+            setCsvParseError(errorMsg);
+            toast.error(errorMsg);
             return;
         }
         setCsvFileName(file.name);
@@ -155,7 +158,9 @@ const ESGSubmitPage = () => {
                 const ws = wb.Sheets[wb.SheetNames[0]];
                 const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
                 if (!aoa || aoa.length === 0) {
-                    setCsvParseError('File is empty. Please use the downloaded template.');
+                    const errorMsg = 'File is empty. Please use the downloaded template.';
+                    setCsvParseError(errorMsg);
+                    toast.error(errorMsg);
                     return;
                 }
                 const headerRow = aoa[0].map(c => String(c).toLowerCase());
@@ -174,14 +179,25 @@ const ESGSubmitPage = () => {
                     if (raw && raw.length > 0) dataRow = raw[raw.length - 1];
                 }
                 if (!dataRow) {
-                    setCsvParseError('Could not read data. Please use the downloaded template.');
+                    const errorMsg = 'Could not read data. Please use the downloaded template.';
+                    setCsvParseError(errorMsg);
+                    toast.error(errorMsg);
                     return;
                 }
                 const missing = validateCsvRow(dataRow);
-                if (missing.length > 0) setCsvValidationErrors(missing);
-                else { setCsvParsedRow(dataRow); setCsvPreviewOpen(true); }
+                if (missing.length > 0) {
+                    setCsvValidationErrors(missing);
+                    toast.error(`Validation failed. ${missing.length} missing fields.`);
+                }
+                else { 
+                    setCsvParsedRow(dataRow); 
+                    setCsvPreviewOpen(true); 
+                    toast.success("File parsed successfully! Ready for preview.");
+                }
             } catch (err) {
-                setCsvParseError('Failed to parse file. Please use the downloaded template.');
+                const errorMsg = 'Failed to parse file. Please use the downloaded template.';
+                setCsvParseError(errorMsg);
+                toast.error(errorMsg);
                 console.error(err);
             }
         };
@@ -196,9 +212,12 @@ const ESGSubmitPage = () => {
             const response = await api.post('/core/submit-all', payload);
             setCsvFinalScore(response.data);
             setCsvSuccess('ESG Report submitted successfully!');
+            toast.success('ESG Report submitted successfully!');
             setCsvPreviewOpen(false);
         } catch (err) {
-            setCsvError(err.response?.data?.message || err.message || 'Submission failed.');
+            const msg = err.response?.data?.message || err.message || 'Submission failed.';
+            setCsvError(msg);
+            toast.error(msg);
         } finally {
             setCsvLoading(false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -348,10 +367,13 @@ const ESGSubmitPage = () => {
             const response = await api.post('/core/submit-all', payload);
             setFinalScore(response.data);
             handleMessage("Complete ESG Report Submitted Successfully!");
+            toast.success("Complete ESG Report Submitted Successfully!");
 
         } catch (error) {
             console.error(error);
-            handleMessage(error.message || error.response?.data?.message || `Failed to submit ESG data. Please check all fields and try again.`, true);
+            const msg = error.message || error.response?.data?.message || `Failed to submit ESG data. Please check all fields and try again.`;
+            handleMessage(msg, true);
+            toast.error(msg);
         } finally {
             setLoading(false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -423,18 +445,7 @@ const ESGSubmitPage = () => {
                     </div>
                 )}
 
-                <AnimatePresence mode="wait">
-                    {successMsg && (
-                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="p-4 mb-6 rounded-lg bg-green-500/20 border border-green-500/50 text-green-400 flex items-center gap-3">
-                            <CheckCircle2 /> {successMsg}
-                        </motion.div>
-                    )}
-                    {errorMsg && (
-                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="p-4 mb-6 rounded-lg bg-red-500/20 border border-red-500/50 text-red-400 flex items-center gap-3">
-                            <AlertCircle /> {errorMsg}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+
 
                 {submitMode === 'manual' && (
                     <motion.div key={activeTab} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className={styles.formCard}>
@@ -743,19 +754,7 @@ const ESGSubmitPage = () => {
 
                         {!csvFinalScore && (
                             <>
-                                {/* Global Alerts for CSV Page */}
-                                <AnimatePresence mode="wait">
-                                    {csvSuccess && (
-                                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={styles.alertSuccess}>
-                                            <CheckCircle2 size={18} /> {csvSuccess}
-                                        </motion.div>
-                                    )}
-                                    {csvError && (
-                                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={styles.alertError}>
-                                            <AlertCircle size={18} /> {csvError}
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
+
 
                                 {/* Step 1: Download Template */}
                                 <div className={styles.card}>

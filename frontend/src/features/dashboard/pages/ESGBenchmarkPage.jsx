@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Target, Leaf, Users, Shield, CheckCircle2, AlertCircle, Loader2, Save, Upload, FileSpreadsheet, Play } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import api from '../../../utils/api';
 import styles from './ESGBenchmarkPage.module.css';
 
@@ -73,11 +74,14 @@ const ESGBenchmarkPage = () => {
 
             await Promise.all(promises);
             
+            toast.success(`${pillar} benchmarks updated successfully!`);
             setSubmitStatus({ type: 'success', message: `${pillar} benchmarks updated successfully!` });
             setTimeout(() => setSubmitStatus({ type: '', message: '' }), 4000);
         } catch (err) {
             console.error(err);
-            setSubmitStatus({ type: 'error', message: err.response?.data?.message || `Failed to update ${pillar} benchmarks.` });
+            const msg = err.response?.data?.message || `Failed to update ${pillar} benchmarks.`;
+            toast.error(msg);
+            setSubmitStatus({ type: 'error', message: msg });
         } finally {
             setLoading(false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -154,14 +158,7 @@ const ESGBenchmarkPage = () => {
                     </motion.div>
                 </div>
 
-                <AnimatePresence>
-                    {submitStatus.message && (
-                        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className={`mb-8 p-4 rounded-xl flex items-center gap-3 ${submitStatus.type === 'success' ? 'bg-green-500/10 text-green-700 border border-green-500/20' : 'bg-red-500/10 text-red-700 border border-red-500/20'}`}>
-                            {submitStatus.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
-                            <span className="font-medium">{submitStatus.message}</span>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+
 
                 <div className={styles.tabs}>
                     <button onClick={() => setActiveTab('environment')} className={`${styles.tabBtn} ${activeTab === 'environment' ? styles.active : ''}`}><Leaf size={18} /> Environment</button>

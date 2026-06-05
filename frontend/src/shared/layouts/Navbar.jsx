@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Leaf, LogOut, LayoutDashboard, Target, Shield } from 'lucide-react';
 import { useAuth } from '../../features/auth/context/AuthContext';
+import { toast } from 'react-hot-toast';
 import styles from './Navbar.module.css';
 
 import logo from '../../app/assets/logo.png';
@@ -12,6 +13,7 @@ const Navbar = () => {
 
     const handleLogout = () => {
         logout();
+        toast.success("Logged out successfully.");
         navigate('/');
     };
     return (

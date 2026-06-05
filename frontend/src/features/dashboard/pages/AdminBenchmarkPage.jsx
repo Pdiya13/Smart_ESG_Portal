@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import adminService from '../services/adminService';
 import { Button } from '../../../shared/components/ui/Button';
 import { Settings, Save, RefreshCcw, AlertTriangle, CheckCircle2, Search, Filter } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import styles from './AdminBenchmarkPage.module.css';
 
 const AdminBenchmarkPage = () => {
@@ -18,14 +19,18 @@ const AdminBenchmarkPage = () => {
         fetchBenchmarks();
     }, []);
 
-    const fetchBenchmarks = async () => {
+    const fetchBenchmarks = async (isManual = false) => {
         try {
             setLoading(true);
             const data = await adminService.getAllBenchmarkStandards();
             setBenchmarks(data);
             setError(null);
+            if (isManual) {
+                toast.success("Global standards refreshed.");
+            }
         } catch (err) {
             setError('Failed to fetch benchmark standards. Please ensure core service is running.');
+            toast.error('Failed to fetch benchmark standards.');
             console.error(err);
         } finally {
             setLoading(false);
@@ -37,18 +42,23 @@ const AdminBenchmarkPage = () => {
             setSuccess(null);
             const val = parseFloat(editValue);
             if (isNaN(val)) {
-                setError('Please enter a valid numeric value');
+                const errorMsg = 'Please enter a valid numeric value';
+                setError(errorMsg);
+                toast.error(errorMsg);
                 return;
             }
 
             await adminService.updateBenchmarkStandard(kpiName, val);
-            setSuccess(`Successfully updated ${kpiName} standard!`);
+            const msg = `Successfully updated ${kpiName} standard!`;
+            setSuccess(msg);
+            toast.success(msg);
             setEditingKpi(null);
             fetchBenchmarks();
 
             setTimeout(() => setSuccess(null), 3000);
         } catch (err) {
             setError('Failed to update benchmark standard.');
+            toast.error('Failed to update benchmark standard.');
             console.error(err);
         }
     };
@@ -88,24 +98,11 @@ const AdminBenchmarkPage = () => {
                         <p>Configure ESG standards for all registered companies</p>
                     </div>
                 </div>
-                <Button variant="outline" onClick={fetchBenchmarks} className={styles.refreshBtn}>
+                <Button variant="outline" onClick={() => fetchBenchmarks(true)} className={styles.refreshBtn}>
                     <RefreshCcw size={16} /> Refresh
                 </Button>
             </header>
 
-            {error && (
-                <div className={styles.alertError}>
-                    <AlertTriangle size={20} />
-                    <span>{error}</span>
-                </div>
-            )}
-
-            {success && (
-                <div className={styles.alertSuccess}>
-                    <CheckCircle2 size={20} />
-                    <span>{success}</span>
-                </div>
-            )}
 
             <div className={styles.controls}>
                 <div className={styles.searchBox}>
