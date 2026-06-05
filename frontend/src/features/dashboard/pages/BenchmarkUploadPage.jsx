@@ -6,6 +6,7 @@ import {
     Upload, Download, FileSpreadsheet, CheckCircle2, AlertCircle,
     Loader2, ArrowRight, Eye, X, Leaf, Users, Shield, Info, Target
 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import api from '../../../utils/api';
 import styles from './BenchmarkUploadPage.module.css';
 
@@ -117,7 +118,9 @@ const BenchmarkUploadPage = () => {
 
         const ext = file.name.split('.').pop().toLowerCase();
         if (!['csv', 'xlsx', 'xls'].includes(ext)) {
-            setParseError('Unsupported file type. Please upload .csv, .xlsx, or .xls.');
+            const errorMsg = 'Unsupported file type. Please upload .csv, .xlsx, or .xls.';
+            setParseError(errorMsg);
+            toast.error(errorMsg);
             return;
         }
         setFileName(file.name);
@@ -131,7 +134,9 @@ const BenchmarkUploadPage = () => {
                 const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
 
                 if (!aoa || aoa.length === 0) {
-                    setParseError('File is empty.');
+                    const errorMsg = 'File is empty.';
+                    setParseError(errorMsg);
+                    toast.error(errorMsg);
                     return;
                 }
 
@@ -140,7 +145,9 @@ const BenchmarkUploadPage = () => {
                 const valCol = headerRow.findIndex(h => h.includes('target value') || h.includes('fill here'));
 
                 if (keyCol === -1 || valCol === -1) {
-                    setParseError('Column headers "Field Key" or "Target Value" not found. Please use the template.');
+                    const errorMsg = 'Column headers "Field Key" or "Target Value" not found. Please use the template.';
+                    setParseError(errorMsg);
+                    toast.error(errorMsg);
                     return;
                 }
 
@@ -155,12 +162,16 @@ const BenchmarkUploadPage = () => {
                 const missing = validateRow(map);
                 if (missing.length > 0) {
                     setValidationErrors(missing);
+                    toast.error(`Validation failed. ${missing.length} missing fields.`);
                 } else {
                     setParsedRow(map);
                     setPreviewOpen(true);
+                    toast.success("File parsed successfully! Ready for preview.");
                 }
             } catch (err) {
-                setParseError('Failed to parse file.');
+                const errorMsg = 'Failed to parse file.';
+                setParseError(errorMsg);
+                toast.error(errorMsg);
                 console.error(err);
             }
         };
@@ -191,9 +202,12 @@ const BenchmarkUploadPage = () => {
             await Promise.all(promises);
 
             setSuccessMsg('Benchmarks updated successfully!');
+            toast.success('Benchmarks updated successfully!');
             setTimeout(() => navigate('/benchmarks'), 2000);
         } catch (err) {
-            setErrorMsg(err.response?.data?.message || 'Failed to update benchmarks.');
+            const msg = err.response?.data?.message || 'Failed to update benchmarks.';
+            setErrorMsg(msg);
+            toast.error(msg);
         } finally {
             setLoading(false);
             setPreviewOpen(false);
@@ -215,8 +229,7 @@ const BenchmarkUploadPage = () => {
                     <p className={styles.subtitle}>Set your ESG targets globally using a spreadsheet.</p>
                 </div>
 
-                {successMsg && <div className={styles.alertSuccess}><CheckCircle2 size={18} /> {successMsg}</div>}
-                {errorMsg && <div className={styles.alertError}><AlertCircle size={18} /> {errorMsg}</div>}
+
 
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>

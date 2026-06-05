@@ -6,6 +6,7 @@ import {
     Upload, Download, FileSpreadsheet, CheckCircle2, AlertCircle,
     Loader2, ArrowRight, Award, Eye, X, Leaf, Users, Shield, Info
 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import api from '../../../utils/api';
 import styles from './ESGUploadPage.module.css';
 
@@ -178,7 +179,9 @@ const ESGUploadPage = () => {
 
         const ext = file.name.split('.').pop().toLowerCase();
         if (!['csv', 'xlsx', 'xls'].includes(ext)) {
-            setParseError('Unsupported file type. Please upload .csv, .xlsx, or .xls.');
+            const errorMsg = 'Unsupported file type. Please upload .csv, .xlsx, or .xls.';
+            setParseError(errorMsg);
+            toast.error(errorMsg);
             return;
         }
         setFileName(file.name);
@@ -194,7 +197,9 @@ const ESGUploadPage = () => {
                 const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
 
                 if (!aoa || aoa.length === 0) {
-                    setParseError('File is empty or has no data rows. Please use the provided template.');
+                    const errorMsg = 'File is empty or has no data rows. Please use the provided template.';
+                    setParseError(errorMsg);
+                    toast.error(errorMsg);
                     return;
                 }
 
@@ -226,19 +231,25 @@ const ESGUploadPage = () => {
                 }
 
                 if (!dataRow) {
-                    setParseError('Could not read data from the file. Please use the downloaded template.');
+                    const errorMsg = 'Could not read data from the file. Please use the downloaded template.';
+                    setParseError(errorMsg);
+                    toast.error(errorMsg);
                     return;
                 }
 
                 const missing = validateRow(dataRow);
                 if (missing.length > 0) {
                     setValidationErrors(missing);
+                    toast.error(`Validation failed. ${missing.length} missing fields.`);
                 } else {
                     setParsedRow(dataRow);
                     setPreviewOpen(true);
+                    toast.success("File parsed successfully! Ready for preview.");
                 }
             } catch (err) {
-                setParseError('Failed to parse the file. Please use the downloaded template without modifying column headers.');
+                const errorMsg = 'Failed to parse the file. Please use the downloaded template without modifying column headers.';
+                setParseError(errorMsg);
+                toast.error(errorMsg);
                 console.error(err);
             }
         };
@@ -260,9 +271,12 @@ const ESGUploadPage = () => {
             const response = await api.post('/core/submit-all', payload);
             setFinalScore(response.data);
             setSuccessMsg('ESG Report submitted successfully!');
+            toast.success('ESG Report submitted successfully!');
             setPreviewOpen(false);
         } catch (err) {
-            setErrorMsg(err.response?.data?.message || err.message || 'Submission failed. Please try again.');
+            const msg = err.response?.data?.message || err.message || 'Submission failed. Please try again.';
+            setErrorMsg(msg);
+            toast.error(msg);
         } finally {
             setLoading(false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -301,19 +315,7 @@ const ESGUploadPage = () => {
                     </motion.div>
                 </div>
 
-                {/* ── Alerts ── */}
-                <AnimatePresence mode="wait">
-                    {successMsg && (
-                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={styles.alertSuccess}>
-                            <CheckCircle2 size={18} /> {successMsg}
-                        </motion.div>
-                    )}
-                    {errorMsg && (
-                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={styles.alertError}>
-                            <AlertCircle size={18} /> {errorMsg}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+
 
                 {/* ── Success / Score Card ── */}
                 {finalScore && (

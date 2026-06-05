@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldX, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-hot-toast';
 import styles from './BlockedPage.module.css';
 
 const BlockedPage = () => {
@@ -10,6 +11,7 @@ const BlockedPage = () => {
 
     const handleLogout = () => {
         logout();
+        toast.success("Logged out successfully.");
         navigate('/login');
     };
 

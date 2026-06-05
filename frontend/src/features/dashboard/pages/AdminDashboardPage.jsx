@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, RefreshCcw, Search, Filter, AlertTriangle, CheckCircle2, Building2, UserX, UserCheck } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import adminService from '../services/adminService';
 import styles from './AdminDashboardPage.module.css';
 
@@ -18,14 +19,18 @@ const AdminDashboardPage = () => {
         fetchCompanies();
     }, []);
 
-    const fetchCompanies = async () => {
+    const fetchCompanies = async (isManual = false) => {
         try {
             setLoading(true);
             setError(null);
             const data = await adminService.getAllCompanies();
             setCompanies(data);
+            if (isManual) {
+                toast.success("Company list refreshed.");
+            }
         } catch (err) {
             setError('Failed to fetch companies. Please ensure auth service is running.');
+            toast.error('Failed to fetch companies.');
             console.error(err);
         } finally {
             setLoading(false);
@@ -49,10 +54,14 @@ const AdminDashboardPage = () => {
             const updated = await adminService.toggleCompanyStatus(company.id);
 
             setCompanies(prev => prev.map(c => c.id === updated.id ? updated : c));
-            setSuccess(`Successfully ${updated.active ? 'enabled' : 'disabled'} ${updated.companyName}`);
+            const msg = `Successfully ${updated.active ? 'enabled' : 'disabled'} ${updated.companyName}`;
+            setSuccess(msg);
+            toast.success(msg);
             setTimeout(() => setSuccess(null), 4000);
         } catch (err) {
-            setError(`Failed to update ${company.companyName}. Please try again.`);
+            const errorMsg = `Failed to update ${company.companyName}. Please try again.`;
+            setError(errorMsg);
+            toast.error(errorMsg);
             console.error(err);
         } finally {
             setTogglingId(null);
@@ -104,7 +113,7 @@ const AdminDashboardPage = () => {
                         <p>Monitor and manage portal access for all registered companies</p>
                     </div>
                 </div>
-                <button onClick={fetchCompanies} className={styles.refreshBtn}>
+                <button onClick={() => fetchCompanies(true)} className={styles.refreshBtn}>
                     <RefreshCcw size={16} /> Refresh
                 </button>
             </header>
@@ -125,19 +134,7 @@ const AdminDashboardPage = () => {
                 </div>
             </div>
 
-            {/* Alerts */}
-            {error && (
-                <div className={styles.alertError}>
-                    <AlertTriangle size={20} />
-                    <span>{error}</span>
-                </div>
-            )}
-            {success && (
-                <div className={styles.alertSuccess}>
-                    <CheckCircle2 size={20} />
-                    <span>{success}</span>
-                </div>
-            )}
+
 
             {/* Controls */}
             <div className={styles.controls}>

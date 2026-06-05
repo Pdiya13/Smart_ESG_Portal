@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Building2, Mail, Loader2, CheckCircle2, AlertCircle, Save, Edit3, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-hot-toast';
 import styles from './ProfilePage.module.css';
 
 const ProfilePage = () => {
@@ -37,11 +38,14 @@ const ProfilePage = () => {
 
         try {
             await updateUser(formData);
+            toast.success('Profile updated successfully!');
             setSuccessMsg('Profile updated successfully!');
             setIsEditing(false);
             setTimeout(() => setSuccessMsg(''), 4000);
         } catch (err) {
-            setErrorMsg(err.response?.data?.message || err.message || 'Failed to update profile.');
+            const msg = err.response?.data?.message || err.message || 'Failed to update profile.';
+            toast.error(msg);
+            setErrorMsg(msg);
             setTimeout(() => setErrorMsg(''), 5000);
         } finally {
             setLoading(false);
@@ -91,19 +95,6 @@ const ProfilePage = () => {
                     </motion.p>
                 </div>
 
-                <AnimatePresence mode="wait">
-                    {successMsg && !isEditing && (
-                        <motion.div
-                            initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                            animate={{ opacity: 1, height: 'auto', marginBottom: 20 }}
-                            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                            className={styles.alertSuccess}
-                            style={{ margin: '0 auto', width: '100%', maxWidth: '540px' }}
-                        >
-                            <CheckCircle2 size={18} /> {successMsg}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
 
                 <motion.div variants={itemVariants} className={styles.formCard}>
                     <div className={styles.cardHeader}>
@@ -178,18 +169,6 @@ const ProfilePage = () => {
                                 </div>
                             </div>
 
-                            <AnimatePresence mode="wait">
-                                {errorMsg && (
-                                    <motion.div
-                                        initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                                        animate={{ opacity: 1, height: 'auto', marginBottom: 20 }}
-                                        exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                                        className={styles.alertError}
-                                    >
-                                        <AlertCircle size={18} /> {errorMsg}
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
 
                             <div className={styles.actionButtons}>
                                 <motion.button
